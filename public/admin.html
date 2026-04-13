@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DM Screen – Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0a14; --bg2: #12121e; --bg3: #1a1a2a;
+      --gold: #c8a743; --gold-light: #e8c76a; --gold-dark: #6a5520;
+      --cream: #e8dcc8; --text: #c8bca8; --muted: #6a6070;
+      --red: #8b2020; --green: #2a7a3a; --blue: #2a4a8b;
+      --border: rgba(200,167,67,0.25); --border-hover: rgba(200,167,67,0.6);
+      --radius: 6px;
+    }
+    html, body { height: 100%; overflow: hidden; }
+    body { background: var(--bg); color: var(--cream); font-family: 'Crimson Text', Georgia, serif; font-size: 15px; }
+
+    /* ── Scrollbar ─────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg2); }
+    ::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 3px; }
+
+    /* ── Utility ───────────────────────────────────────── */
+    .hidden { display: none !important; }
+    .btn {
+      font-family: 'Cinzel', serif; font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      border: 1px solid var(--border); border-radius: var(--radius);
+      background: transparent; color: var(--gold); cursor: pointer;
+      padding: 0.45rem 0.9rem; transition: all 0.15s;
+    }
+    .btn:hover { border-color: var(--gold); background: rgba(200,167,67,0.1); }
+    .btn.primary { background: rgba(200,167,67,0.15); border-color: var(--gold); }
+    .btn.primary:hover { background: rgba(200,167,67,0.3); }
+    .btn.danger { color: #e05050; border-color: rgba(224,80,80,0.3); }
+    .btn.danger:hover { background: rgba(224,80,80,0.15); border-color: #e05050; }
+    .btn.success { color: #50c870; border-color: rgba(80,200,112,0.3); }
+    .btn.success:hover { background: rgba(80,200,112,0.15); border-color: #50c870; }
+    .btn.sm { padding: 0.3rem 0.6rem; font-size: 0.65rem; }
+    .btn.active { background: rgba(200,167,67,0.25); border-color: var(--gold); color: var(--gold-light); }
+    input, textarea, select {
+      background: var(--bg); color: var(--cream);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 0.5rem 0.75rem; font-family: inherit; font-size: 0.95rem; width: 100%;
+      outline: none; transition: border-color 0.15s;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--gold); }
+    label { display: block; margin-bottom: 0.3rem; color: var(--gold); font-size: 0.8rem;
+            font-family: 'Cinzel', serif; letter-spacing: 0.05em; }
+    .field { margin-bottom: 1rem; }
+    .field:last-child { margin-bottom: 0; }
+    .cinzel { font-family: 'Cinzel', serif; }
+
+    /* ── Login overlay ─────────────────────────────────── */
+    #login-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .login-box {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 2.5rem; width: 400px; max-width: 95vw;
+    }
+    .login-box h2 { font-family: 'Cinzel', serif; color: var(--gold); font-size: 1.4rem; margin-bottom: 0.25rem; }
+    .login-box p { color: var(--text); font-style: italic; margin-bottom: 1.5rem; }
+    .login-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .login-tab {
+      flex: 1; padding: 0.5rem; text-align: center; cursor: pointer;
+      border: 1px solid var(--border); border-radius: var(--radius);
+      font-family: 'Cinzel', serif; font-size: 0.75rem; color: var(--muted);
+      transition: all 0.15s;
+    }
+    .login-tab.active { border-color: var(--gold); color: var(--gold); background: rgba(200,167,67,0.1); }
+    #login-error { color: #e05050; font-size: 0.85rem; margin-top: 0.5rem; }
+
+    /* ── Layout ────────────────────────────────────────── */
+    #dashboard {
+      display: grid;
+      grid-template-rows: 48px 1fr 54px;
+      grid-template-columns: 220px 1fr 280px;
+      height: 100vh;
+    }
+
+    /* ── Header ────────────────────────────────────────── */
+    #header {
+      grid-column: 1 / -1;
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 1rem; padding: 0 1rem;
+    }
+    #header .logo { font-family: 'Cinzel', serif; color: var(--gold); font-size: 0.9rem; font-weight: 700; letter-spacing: 0.1em; }
+    #header .sep { color: var(--border); }
+    #code-display {
+      display: flex; align-items: center; gap: 0.6rem;
+      background: var(--bg3); border: 1px solid var(--gold-dark);
+      border-radius: var(--radius); padding: 0.25rem 0.75rem;
+    }
+    #code-display small { color: var(--muted); font-size: 0.65rem; letter-spacing: 0.05em; text-transform: uppercase; }
+    #session-code-text {
+      font-family: 'Cinzel', serif; color: var(--gold-light);
+      font-size: 1.1rem; letter-spacing: 0.35em; font-weight: 700;
+      min-width: 90px; text-align: center;
+    }
+    #code-display .code-sep { width: 1px; height: 18px; background: var(--border); }
+    .copy-btn { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 0.85rem; padding: 0; transition: color 0.15s; line-height: 1; }
+    .copy-btn:hover { color: var(--gold); }
+    #btn-gen-code {
+      background: none; border: none; cursor: pointer; color: var(--muted);
+      font-size: 0.75rem; padding: 0; transition: color 0.15s; line-height: 1;
+      font-family: 'Cinzel', serif; letter-spacing: 0.05em;
+    }
+    #btn-gen-code:hover { color: var(--gold); }
+    #player-count { margin-left: auto; color: var(--muted); font-size: 0.85rem; font-style: italic; }
+    #conn-status { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+
+    /* ── Rooms panel ───────────────────────────────────── */
+    #rooms-panel {
+      background: var(--bg2); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .panel-header {
+      padding: 0.7rem 0.8rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .panel-title { font-family: 'Cinzel', serif; font-size: 0.8rem; color: var(--gold); letter-spacing: 0.1em; }
+    #room-list { flex: 1; overflow-y: auto; padding: 0.4rem; }
+    .room-item {
+      padding: 0.6rem 0.7rem; border-radius: var(--radius);
+      cursor: pointer; border: 1px solid transparent;
+      margin-bottom: 0.3rem; transition: all 0.15s;
+      display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+    }
+    .room-item:hover { background: var(--bg3); border-color: var(--border); }
+    .room-item.selected { background: rgba(200,167,67,0.1); border-color: var(--border-hover); }
+    .room-item.active-room { border-left: 3px solid var(--gold); }
+    .room-name { font-family: 'Cinzel', serif; font-size: 0.8rem; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .room-actions { display: flex; gap: 0.25rem; flex-shrink: 0; }
+    #rooms-empty { padding: 1.5rem; text-align: center; color: var(--muted); font-style: italic; font-size: 0.85rem; }
+
+    /* ── Scene preview ─────────────────────────────────── */
+    #preview-panel {
+      display: flex; flex-direction: column; overflow: hidden;
+      background: #080810;
+    }
+    #preview-header {
+      padding: 0.5rem 0.8rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--bg2); flex-shrink: 0;
+    }
+    #scene-wrapper {
+      flex: 1; overflow: hidden; position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #scene-container {
+      position: relative; overflow: hidden;
+      background: #050508;
+    }
+    .scene-bg {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    }
+    .scene-no-bg {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-style: italic; font-size: 0.85rem; text-align: center;
+    }
+    .sprite-wrapper {
+      position: absolute; transform: translate(-50%, -100%);
+    }
+    .sprite-container { position: relative; }
+    .sprite-img { display: block; width: 100%; height: auto; }
+    .mouth-overlay {
+      position: absolute; pointer-events: none; object-fit: contain;
+      transition: opacity 0.05s;
+    }
+    .mouth-overlay.closed { opacity: 0; }
+    .mouth-overlay.open { opacity: 1; }
+    .info-card-overlay {
+      position: absolute; pointer-events: none;
+    }
+    .info-card-display {
+      padding: 0.6rem 0.9rem; border-radius: 6px; max-width: 200px;
+      font-size: 0.8rem; line-height: 1.4;
+    }
+    .info-card-display.parchment {
+      background: rgba(232, 210, 170, 0.92); color: #3a2a10;
+      border: 2px solid rgba(100,70,20,0.5);
+    }
+    .info-card-display.dark {
+      background: rgba(10,10,20,0.92); color: var(--cream);
+      border: 1px solid var(--gold);
+    }
+    .info-card-display.arcane {
+      background: rgba(20,10,40,0.92); color: #c0d0ff;
+      border: 1px solid rgba(100,120,255,0.5);
+      box-shadow: 0 0 12px rgba(100,120,255,0.2);
+    }
+    .info-card-title { font-family: 'Cinzel', serif; font-size: 0.7rem; font-weight: 600; margin-bottom: 0.25rem; }
+    #preview-empty {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: var(--muted); gap: 0.5rem;
+    }
+    #preview-empty .big { font-size: 3rem; }
+    #preview-empty p { font-style: italic; font-size: 0.9rem; }
+
+    /* ── Info cards panel ──────────────────────────────── */
+    #info-panel {
+      background: var(--bg2); border-left: 1px solid var(--border);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    #card-list { flex: 1; overflow-y: auto; padding: 0.4rem; }
+    .card-item {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 0.6rem 0.7rem;
+      margin-bottom: 0.4rem;
+    }
+    .card-item-header { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.3rem; }
+    .card-item-title { font-family: 'Cinzel', serif; font-size: 0.75rem; color: var(--gold); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .card-item-content { font-size: 0.8rem; color: var(--text); line-height: 1.35; margin-bottom: 0.4rem;
+                          overflow: hidden; text-overflow: ellipsis; display: -webkit-box;
+                          -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .card-item-footer { display: flex; align-items: center; gap: 0.3rem; }
+    .toggle-btn {
+      font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 3px;
+      border: 1px solid; cursor: pointer; font-family: 'Cinzel', serif;
+      letter-spacing: 0.05em; transition: all 0.15s; background: transparent;
+    }
+    .toggle-btn.off { color: var(--muted); border-color: var(--muted); }
+    .toggle-btn.on { color: #50c870; border-color: #50c870; background: rgba(80,200,112,0.1); }
+    #cards-empty { padding: 1.5rem; text-align: center; color: var(--muted); font-style: italic; font-size: 0.85rem; }
+
+    /* ── Footer controls ───────────────────────────────── */
+    #controls {
+      grid-column: 1 / -1;
+      background: var(--bg2); border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 1rem; padding: 0 1rem;
+    }
+    .control-group { display: flex; align-items: center; gap: 0.5rem; }
+    .control-label { font-family: 'Cinzel', serif; font-size: 0.7rem; color: var(--muted); letter-spacing: 0.05em; }
+    #mic-indicator {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--muted); transition: background 0.05s;
+    }
+    #mic-indicator.active { background: #50c870; box-shadow: 0 0 6px #50c870; }
+    #sensitivity-slider { width: 100px; accent-color: var(--gold); cursor: pointer; }
+    .vt-status { font-size: 0.7rem; font-style: italic; }
+    #vt-url-input { width: 180px; font-size: 0.8rem; padding: 0.25rem 0.5rem; }
+
+    /* ── Modals ────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1rem;
+    }
+    .modal {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 10px; width: 100%; max-height: 90vh;
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .modal.sm { max-width: 420px; }
+    .modal.md { max-width: 560px; }
+    .modal.lg { max-width: 780px; }
+    .modal-header {
+      padding: 1rem 1.25rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+    }
+    .modal-header h3 { font-family: 'Cinzel', serif; color: var(--gold); font-size: 1rem; }
+    .modal-close { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 1.2rem; transition: color 0.15s; }
+    .modal-close:hover { color: var(--cream); }
+    .modal-body { padding: 1.25rem; overflow-y: auto; flex: 1; }
+    .modal-footer { padding: 0.8rem 1.25rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 0.5rem; flex-shrink: 0; }
+
+    /* ── Upload zone ───────────────────────────────────── */
+    .upload-zone {
+      border: 2px dashed var(--border); border-radius: var(--radius);
+      padding: 1rem; text-align: center; cursor: pointer;
+      transition: border-color 0.15s; position: relative; overflow: hidden;
+    }
+    .upload-zone:hover { border-color: var(--gold); }
+    .upload-zone input[type=file] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .upload-zone .preview-img {
+      max-height: 140px; max-width: 100%; border-radius: 4px; margin-bottom: 0.5rem;
+    }
+    .upload-zone p { color: var(--muted); font-size: 0.85rem; font-style: italic; }
+    .upload-zone .replace-hint { font-size: 0.75rem; color: var(--gold-dark); margin-top: 0.25rem; }
+    .upload-progress { font-size: 0.75rem; color: var(--muted); margin-top: 0.25rem; }
+
+    /* ── Two-col form ──────────────────────────────────── */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-grid .full { grid-column: 1 / -1; }
+
+    /* ── Mouth editor ──────────────────────────────────── */
+    #mouth-editor-wrap {
+      position: relative; border: 1px solid var(--border); border-radius: var(--radius);
+      overflow: hidden; cursor: crosshair; background: #050508; user-select: none;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #mouth-editor-img { max-width: 100%; max-height: 400px; display: block; pointer-events: none; }
+    #mouth-box {
+      position: absolute; border: 2px solid #e05050;
+      background: rgba(224,80,80,0.15); cursor: move;
+      box-sizing: border-box;
+    }
+    #mouth-box .resize-handle {
+      position: absolute; bottom: -5px; right: -5px;
+      width: 10px; height: 10px; background: #e05050; cursor: se-resize;
+      border-radius: 2px;
+    }
+    .pos-readout { font-size: 0.75rem; color: var(--muted); margin-top: 0.4rem; font-family: monospace; }
+
+    /* ── Sprite editor (position within scene) ─────────── */
+    .range-group { display: flex; align-items: center; gap: 0.5rem; }
+    .range-group input[type=range] { flex: 1; accent-color: var(--gold); }
+    .range-group .val { font-size: 0.75rem; color: var(--muted); min-width: 35px; text-align: right; }
+
+    /* ── Players list ──────────────────────────────────── */
+    #player-list-popup {
+      position: fixed; top: 56px; right: 1rem; z-index: 200;
+      background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 0.75rem; min-width: 200px; max-width: 280px;
+    }
+    #player-list-popup h4 { font-family: 'Cinzel', serif; font-size: 0.75rem; color: var(--gold); margin-bottom: 0.5rem; }
+    .player-entry { font-size: 0.85rem; padding: 0.2rem 0; color: var(--text); border-bottom: 1px solid var(--border); }
+    .player-entry:last-child { border-bottom: none; }
+
+    /* ── Misc ──────────────────────────────────────────── */
+    .tag { display: inline-block; font-size: 0.65rem; padding: 0.1rem 0.4rem; border-radius: 3px; font-family: 'Cinzel', serif; }
+    .tag.parchment { background: rgba(200,170,100,0.2); color: var(--gold); border: 1px solid var(--gold-dark); }
+    .tag.dark { background: rgba(20,20,40,0.8); color: #aaa; border: 1px solid #444; }
+    .tag.arcane { background: rgba(40,20,80,0.8); color: #c0d0ff; border: 1px solid rgba(100,120,255,0.4); }
+    .style-pick { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .style-opt { padding: 0.35rem 0.7rem; border-radius: 4px; cursor: pointer; font-size: 0.75rem; border: 1px solid transparent; transition: all 0.15s; }
+    .style-opt.selected { outline: 2px solid var(--gold); }
+    .style-opt.parchment { background: rgba(232,210,170,0.9); color: #3a2a10; }
+    .style-opt.dark { background: rgba(10,10,20,0.9); color: var(--cream); border-color: var(--gold); }
+    .style-opt.arcane { background: rgba(20,10,40,0.9); color: #c0d0ff; border-color: rgba(100,120,255,0.5); }
+    .notification {
+      position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%);
+      background: var(--bg2); border: 1px solid var(--gold); border-radius: var(--radius);
+      padding: 0.5rem 1rem; font-size: 0.85rem; z-index: 999;
+      animation: fadeup 0.2s ease; pointer-events: none;
+    }
+    @keyframes fadeup { from { opacity: 0; transform: translateX(-50%) translateY(10px); } }
+    .section-sep { border: none; border-top: 1px solid var(--border); margin: 0.75rem 0; }
+    .size-pick { display: flex; gap: 0.35rem; }
+    .size-opt {
+      width: 36px; height: 32px; border-radius: var(--radius);
+      border: 1px solid var(--border); background: transparent;
+      color: var(--text); cursor: pointer; font-family: 'Cinzel', serif;
+      font-weight: 700; transition: all 0.15s; display: flex; align-items: center; justify-content: center;
+    }
+    .size-opt:hover { border-color: var(--gold); color: var(--gold); }
+    .size-opt.selected { border-color: var(--gold); color: var(--gold); background: rgba(200,167,67,0.15); }
+
+    /* ── Preview secrets panel ─────────────────────────── */
+    .preview-secrets-panel {
+      position: absolute; left: 0; top: 0; bottom: 0; width: 30%;
+      background: rgba(10,8,5,0.82); border-right: 1px solid rgba(200,167,67,0.2);
+      display: flex; flex-direction: column; overflow: hidden; z-index: 5;
+      backdrop-filter: blur(4px);
+    }
+    .preview-secrets-header {
+      padding: 0.3rem 0.5rem; border-bottom: 1px solid rgba(200,167,67,0.2);
+      font-family: 'Cinzel', serif; font-size: 0.6rem; color: var(--gold);
+      letter-spacing: 0.1em; flex-shrink: 0;
+    }
+    .preview-secret-item {
+      padding: 0.3rem 0.5rem; border-bottom: 1px solid rgba(200,167,67,0.1);
+      font-size: 0.65rem;
+    }
+    .preview-secret-item.parchment { background: rgba(232,210,170,0.08); }
+    .preview-secret-item.arcane { background: rgba(40,20,80,0.15); }
+    .preview-secret-title { font-family: 'Cinzel', serif; font-size: 0.6rem; color: var(--gold); margin-bottom: 0.15rem; }
+    .preview-secret-body { color: var(--text); line-height: 1.3; white-space: pre-wrap; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  </style>
+</head>
+<body>
+
+<!-- ═══ LOADING OVERLAY ══════════════════════════════════════════════════════ -->
+<div id="login-overlay">
+  <div class="login-box" style="text-align:center">
+    <h2 style="margin-bottom:0.5rem">⚔️ DM Screen</h2>
+    <p id="login-status" style="color:var(--muted);font-style:italic">Connecting…</p>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD ════════════════════════════════════════════════════════════ -->
+<div id="dashboard" class="hidden">
+
+  <!-- Header -->
+  <div id="header">
+    <span class="logo">⚔️ DM Screen</span>
+    <span class="sep">|</span>
+    <div id="code-display">
+      <small>Player Code</small>
+      <div class="code-sep"></div>
+      <span id="session-code-text">——————</span>
+      <div class="code-sep"></div>
+      <button class="copy-btn" onclick="copyCode()" title="Copy code to clipboard">📋</button>
+      <button id="btn-gen-code" onclick="generateCode()" title="Generate new code">🎲 New</button>
+    </div>
+    <div id="conn-status"></div>
+    <span id="player-count">0 players</span>
+  </div>
+
+  <!-- Rooms panel -->
+  <div id="rooms-panel">
+    <div class="panel-header">
+      <span class="panel-title">🏰 Rooms</span>
+      <button class="btn sm" onclick="openAddRoomModal()">+ Add</button>
+    </div>
+    <div id="room-list">
+      <div id="rooms-empty">No rooms yet.<br>Add your first room!</div>
+    </div>
+  </div>
+
+  <!-- Scene preview -->
+  <div id="preview-panel">
+    <div id="preview-header">
+      <span class="panel-title cinzel" style="font-size:0.8rem">👁 Scene Preview</span>
+      <div style="display:flex;gap:0.4rem;align-items:center">
+        <span id="preview-room-name" style="font-size:0.75rem;color:var(--muted);font-style:italic"></span>
+        <button class="btn sm" id="btn-switch-room" onclick="switchCurrentRoom()" style="display:none">▶ Show to Players</button>
+        <button class="btn sm" id="btn-edit-room" onclick="openEditRoomModal()" style="display:none">✏ Edit Room</button>
+      </div>
+    </div>
+    <div id="scene-wrapper">
+      <div id="scene-container">
+        <div id="preview-empty">
+          <div class="big">🏰</div>
+          <p>Select or add a room to preview</p>
+        </div>
+        <!-- BG, sprite, mouth, cards rendered here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Info cards panel -->
+  <div id="info-panel">
+    <div class="panel-header">
+      <span class="panel-title">📜 Info Cards</span>
+      <button class="btn sm" onclick="openAddCardModal()">+ Add</button>
+    </div>
+    <div id="card-list">
+      <div id="cards-empty">No info cards yet.</div>
+    </div>
+  </div>
+
+  <!-- Controls footer -->
+  <div id="controls">
+    <div class="control-group">
+      <span class="control-label">Mic</span>
+      <div id="mic-levels" style="display:flex;gap:2px;align-items:flex-end;height:16px">
+        <div id="mic-bar-0" style="width:6px;height:6px;border-radius:1px;background:var(--muted);transition:background 0.05s"></div>
+        <div id="mic-bar-1" style="width:6px;height:10px;border-radius:1px;background:var(--muted);transition:background 0.05s"></div>
+        <div id="mic-bar-2" style="width:6px;height:14px;border-radius:1px;background:var(--muted);transition:background 0.05s"></div>
+      </div>
+      <button class="btn sm" id="btn-mic" onclick="toggleMic()">Start Mic</button>
+      <span class="vt-status" id="mic-vol-display" style="color:var(--muted);min-width:40px">—</span>
+    </div>
+    <div class="control-group" style="margin-left:1rem">
+      <span class="control-label">Veadotube</span>
+      <input id="vt-url-input" placeholder="ws://localhost:8001" value="ws://localhost:8001">
+      <button class="btn sm" id="btn-vt" onclick="toggleVeadotube()">Connect</button>
+      <span class="vt-status" id="vt-status" style="color:var(--muted)">Not connected</span>
+    </div>
+    <div style="margin-left:auto;display:flex;gap:0.5rem">
+      <button class="btn sm" onclick="togglePlayerList()">👥 Players</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PLAYER LIST POPUP ═════════════════════════════════════════════════════ -->
+<div id="player-list-popup" class="hidden">
+  <h4>Connected Players</h4>
+  <div id="player-entries"><em style="color:var(--muted);font-size:0.8rem">No players connected</em></div>
+</div>
+
+<!-- ═══ ADD / EDIT ROOM MODAL ════════════════════════════════════════════════ -->
+<div id="room-modal" class="modal-overlay hidden">
+  <div class="modal lg">
+    <div class="modal-header">
+      <h3 id="room-modal-title">Add Room</h3>
+      <button class="modal-close" onclick="closeModal('room-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field full">
+          <label>Room Name</label>
+          <input id="rm-name" placeholder="e.g. Tavern, Dungeon…">
+        </div>
+        <div class="field">
+          <label>Background Image</label>
+          <div class="upload-zone" id="bg-zone">
+            <input type="file" id="bg-file" accept="image/*" onchange="handleUpload('bg-file','bg-zone','rm-bg-url','bg-preview')">
+            <img id="bg-preview" class="preview-img hidden">
+            <p id="bg-hint">Click or drop an image</p>
+            <p class="replace-hint hidden" id="bg-replace">Click to replace</p>
+          </div>
+          <input type="hidden" id="rm-bg-url">
+        </div>
+        <div class="field">
+          <label>Background Fit</label>
+          <select id="rm-bg-fit">
+            <option value="cover">Cover (fill, may crop)</option>
+            <option value="contain">Contain (show all, may letterbox)</option>
+            <option value="fill">Stretch (distort to fill)</option>
+          </select>
+          <hr class="section-sep">
+          <label style="margin-top:0.5rem">Character Sprite (mouthless)</label>
+          <div class="upload-zone" id="sprite-zone">
+            <input type="file" id="sprite-file" accept="image/*" onchange="handleUpload('sprite-file','sprite-zone','rm-sprite-url','sprite-preview')">
+            <img id="sprite-preview" class="preview-img hidden">
+            <p id="sprite-hint">Click or drop an image</p>
+            <p class="replace-hint hidden" id="sprite-replace">Click to replace</p>
+          </div>
+          <input type="hidden" id="rm-sprite-url">
+        </div>
+        <div class="field full" style="border-top:1px solid var(--border);padding-top:0.75rem">
+          <label>Mouth Images</label>
+          <p style="color:var(--muted);font-size:0.78rem;margin-bottom:0.6rem;font-style:italic">At rest (volume ≤10) the sprite shows naturally. Upload up to 4 mouth images for each volume tier.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:0.5rem">
+            <div>
+              <label style="font-size:0.7rem;color:var(--muted)">😐 Resting (vol 1–10)</label>
+              <div class="upload-zone" id="mouth1-zone">
+                <input type="file" id="mouth1-file" accept="image/*" onchange="handleUpload('mouth1-file','mouth1-zone','rm-mouth-url-1','mouth1-preview')">
+                <img id="mouth1-preview" class="preview-img hidden">
+                <p id="mouth1-hint">Click or drop</p>
+                <p class="replace-hint hidden" id="mouth1-replace">Click to replace</p>
+              </div>
+              <input type="hidden" id="rm-mouth-url-1">
+            </div>
+            <div>
+              <label style="font-size:0.7rem;color:var(--muted)">😮 Talking (vol 11–40)</label>
+              <div class="upload-zone" id="mouth2-zone">
+                <input type="file" id="mouth2-file" accept="image/*" onchange="handleUpload('mouth2-file','mouth2-zone','rm-mouth-url-2','mouth2-preview')">
+                <img id="mouth2-preview" class="preview-img hidden">
+                <p id="mouth2-hint">Click or drop</p>
+                <p class="replace-hint hidden" id="mouth2-replace">Click to replace</p>
+              </div>
+              <input type="hidden" id="rm-mouth-url-2">
+            </div>
+            <div>
+              <label style="font-size:0.7rem;color:var(--muted)">😯 Medium (vol 41–60)</label>
+              <div class="upload-zone" id="mouth3-zone">
+                <input type="file" id="mouth3-file" accept="image/*" onchange="handleUpload('mouth3-file','mouth3-zone','rm-mouth-url-3','mouth3-preview')">
+                <img id="mouth3-preview" class="preview-img hidden">
+                <p id="mouth3-hint">Click or drop</p>
+                <p class="replace-hint hidden" id="mouth3-replace">Click to replace</p>
+              </div>
+              <input type="hidden" id="rm-mouth-url-3">
+            </div>
+            <div>
+              <label style="font-size:0.7rem;color:var(--muted)">😲 Loud (vol 61+)</label>
+              <div class="upload-zone" id="mouth4-zone">
+                <input type="file" id="mouth4-file" accept="image/*" onchange="handleUpload('mouth4-file','mouth4-zone','rm-mouth-url-4','mouth4-preview')">
+                <img id="mouth4-preview" class="preview-img hidden">
+                <p id="mouth4-hint">Click or drop</p>
+                <p class="replace-hint hidden" id="mouth4-replace">Click to replace</p>
+              </div>
+              <input type="hidden" id="rm-mouth-url-4">
+            </div>
+          </div>
+          <button class="btn sm" style="margin-top:0.75rem;width:100%" onclick="openMouthEditor()" id="btn-place-mouth">Set Mouth Position on Sprite</button>
+        </div>
+        <div class="field full" style="border-top:1px solid var(--border);padding-top:0.75rem">
+          <label>Sprite Position &amp; Size</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;margin-top:0.4rem">
+            <div>
+              <label style="font-size:0.7rem">X (% from left)</label>
+              <div class="range-group">
+                <input type="range" id="rm-sx" min="0" max="100" value="75" oninput="document.getElementById('rm-sx-val').textContent=this.value+'%';refreshPreview()">
+                <span class="val" id="rm-sx-val">75%</span>
+              </div>
+            </div>
+            <div>
+              <label style="font-size:0.7rem">Y (% from top, anchor=bottom)</label>
+              <div class="range-group">
+                <input type="range" id="rm-sy" min="0" max="100" value="80" oninput="document.getElementById('rm-sy-val').textContent=this.value+'%';refreshPreview()">
+                <span class="val" id="rm-sy-val">80%</span>
+              </div>
+            </div>
+            <div>
+              <label style="font-size:0.7rem">Width (px)</label>
+              <div class="range-group">
+                <input type="range" id="rm-sw" min="80" max="1200" value="280" oninput="document.getElementById('rm-sw-val').textContent=this.value+'px';refreshPreview()">
+                <span class="val" id="rm-sw-val">280px</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('room-modal')">Cancel</button>
+      <button class="btn primary" onclick="saveRoom()">Save Room</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MOUTH EDITOR MODAL ════════════════════════════════════════════════════ -->
+<div id="mouth-modal" class="modal-overlay hidden">
+  <div class="modal md">
+    <div class="modal-header">
+      <h3>Set Mouth Position</h3>
+      <button class="modal-close" onclick="closeModal('mouth-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--text);font-style:italic;margin-bottom:0.75rem;font-size:0.9rem">Drag the red box to position the mouth on your sprite. Drag the handle (bottom-right) to resize.</p>
+      <div id="mouth-editor-wrap">
+        <img id="mouth-editor-img" src="" alt="Sprite">
+        <div id="mouth-box">
+          <div class="resize-handle" id="mouth-resize-handle"></div>
+        </div>
+      </div>
+      <p class="pos-readout" id="mouth-pos-readout">Position: x=35% y=55% w=30% h=15%</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('mouth-modal')">Cancel</button>
+      <button class="btn primary" onclick="saveMouthPosition()">Apply Position</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ADD / EDIT CARD MODAL ════════════════════════════════════════════════ -->
+<div id="card-modal" class="modal-overlay hidden">
+  <div class="modal sm">
+    <div class="modal-header">
+      <h3 id="card-modal-title">Add Info Card</h3>
+      <button class="modal-close" onclick="closeModal('card-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Title</label>
+        <input id="cm-title" placeholder="NPC Name, Quest Hook, etc.">
+      </div>
+      <div class="field">
+        <label>Content</label>
+        <textarea id="cm-content" rows="5" placeholder="Enter text for players to see…"></textarea>
+      </div>
+      <div class="field">
+        <label>Position on Screen</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
+          <div>
+            <label style="font-size:0.7rem">X (% from left)</label>
+            <div class="range-group">
+              <input type="range" id="cm-x" min="0" max="90" value="5" oninput="document.getElementById('cm-x-val').textContent=this.value+'%'">
+              <span class="val" id="cm-x-val">5%</span>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:0.7rem">Y (% from top)</label>
+            <div class="range-group">
+              <input type="range" id="cm-y" min="0" max="90" value="5" oninput="document.getElementById('cm-y-val').textContent=this.value+'%'">
+              <span class="val" id="cm-y-val">5%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Card Style</label>
+        <div class="style-pick">
+          <div class="style-opt parchment selected" data-style="parchment" onclick="selectStyle(this)">Parchment</div>
+          <div class="style-opt dark" data-style="dark" onclick="selectStyle(this)">Dark</div>
+          <div class="style-opt arcane" data-style="arcane" onclick="selectStyle(this)">Arcane</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Text Size</label>
+        <div class="size-pick">
+          <button class="size-opt" data-size="0.75rem" onclick="selectSize(this)" style="font-size:0.75rem">S</button>
+          <button class="size-opt selected" data-size="1rem" onclick="selectSize(this)" style="font-size:1rem">M</button>
+          <button class="size-opt" data-size="1.2rem" onclick="selectSize(this)" style="font-size:1.2rem">L</button>
+          <button class="size-opt" data-size="1.5rem" onclick="selectSize(this)" style="font-size:1.5rem">XL</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('card-modal')">Cancel</button>
+      <button class="btn primary" onclick="saveCard()">Save Card</button>
+    </div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+// ════════════════════════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════════════════════════
+const socket = io();
+let sessionCode = null;
+let rooms = [];
+let infoCards = [];
+let selectedRoomIndex = -1;
+let editingRoomId = null;
+let editingCardId = null;
+let mouthPosition = { x: 35, y: 55, w: 30, h: 15 };
+let mouthOpen = false;
+let micActive = false;
+let audioCtx = null;
+let analyser = null;
+let micStream = null;
+let micAnimFrame = null;
+let vtSocket = null;
+let vtConnected = false;
+let players = [];
+let playerListVisible = false;
+
+// ════════════════════════════════════════════════════════════════════════════
+// AUTO-INIT: create or rejoin session on connect
+// ════════════════════════════════════════════════════════════════════════════
+function setLoginStatus(msg) {
+  const el = document.getElementById('login-status');
+  if (el) el.textContent = msg;
+}
+
+function autoInit() {
+  const storedCode  = sessionStorage.getItem('dmCode');
+  const storedToken = sessionStorage.getItem('dmToken');
+
+  if (storedCode && storedToken) {
+    setLoginStatus('Rejoining your session…');
+    socket.emit('rejoin-admin', { code: storedCode, adminToken: storedToken }, (res) => {
+      if (res.success) {
+        initSession(res.code, res.session);
+      } else {
+        // Stored session gone (server restart etc.) — start fresh
+        sessionStorage.removeItem('dmCode');
+        sessionStorage.removeItem('dmToken');
+        startFreshSession();
+      }
+    });
+  } else {
+    startFreshSession();
+  }
+}
+
+function startFreshSession() {
+  setLoginStatus('Creating your session…');
+  socket.emit('create-session', {}, (res) => {
+    if (res.error) { setLoginStatus('Error: ' + res.error); return; }
+    sessionStorage.setItem('dmCode',  res.code);
+    sessionStorage.setItem('dmToken', res.adminToken);
+    initSession(res.code, res.session);
+  });
+}
+
+function initSession(code, session) {
+  sessionCode = code;
+  rooms = session.rooms || [];
+  infoCards = session.infoCards || [];
+
+  document.getElementById('session-code-text').textContent = code;
+  document.getElementById('login-overlay').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+
+  renderRooms();
+  renderCards();
+
+  if (rooms.length > 0) {
+    selectRoom(session.currentRoomIndex >= 0 ? session.currentRoomIndex : 0);
+  }
+
+  fitPreview();
+  window.addEventListener('resize', fitPreview);
+}
+
+function copyCode() {
+  if (!sessionCode) return;
+  navigator.clipboard.writeText(sessionCode).then(() => showNotif('Code copied!'));
+}
+
+function generateCode() {
+  if (players.length > 0) {
+    if (!confirm(`${players.length} player(s) are connected. Generating a new code will disconnect them and they will need to rejoin. Continue?`)) return;
+  }
+  socket.emit('generate-code', (res) => {
+    if (res.error) return showNotif(res.error, true);
+    sessionCode = res.code;
+    sessionStorage.setItem('dmCode', res.code);
+    document.getElementById('session-code-text').textContent = res.code;
+    // Animate the code text to draw attention
+    const el = document.getElementById('session-code-text');
+    el.style.transition = 'color 0.1s';
+    el.style.color = '#50c870';
+    setTimeout(() => { el.style.color = ''; }, 800);
+    showNotif('New code generated — share it with your players!');
+  });
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// SOCKET EVENTS
+// ════════════════════════════════════════════════════════════════════════════
+socket.on('connect', () => {
+  document.getElementById('conn-status').style.background = 'var(--green)';
+  if (!sessionCode) autoInit();
+});
+socket.on('disconnect', () => { document.getElementById('conn-status').style.background = 'var(--red)'; });
+
+socket.on('player-joined', ({ id, name }) => {
+  players.push({ id, name });
+  updatePlayerCount();
+  updatePlayerList();
+  showNotif(`${name} joined the session`);
+});
+
+socket.on('player-left', ({ id, name }) => {
+  players = players.filter(p => p.id !== id);
+  updatePlayerCount();
+  updatePlayerList();
+});
+
+socket.on('info-cards-updated', ({ cards }) => {
+  infoCards = cards;
+  renderCards();
+  refreshPreview();
+});
+
+socket.on('rooms-updated', ({ rooms: r }) => {
+  rooms = r;
+  renderRooms();
+});
+
+function updatePlayerCount() {
+  document.getElementById('player-count').textContent = `${players.length} player${players.length !== 1 ? 's' : ''}`;
+}
+
+function updatePlayerList() {
+  const el = document.getElementById('player-entries');
+  if (players.length === 0) {
+    el.innerHTML = '<em style="color:var(--muted);font-size:0.8rem">No players connected</em>';
+  } else {
+    el.innerHTML = players.map(p => `<div class="player-entry">⚔️ ${escHtml(p.name)}</div>`).join('');
+  }
+}
+
+function togglePlayerList() {
+  playerListVisible = !playerListVisible;
+  document.getElementById('player-list-popup').classList.toggle('hidden', !playerListVisible);
+}
+document.addEventListener('click', e => {
+  if (playerListVisible && !e.target.closest('#player-list-popup') && !e.target.closest('[onclick*="togglePlayerList"]')) {
+    playerListVisible = false;
+    document.getElementById('player-list-popup').classList.add('hidden');
+  }
+});
+
+// ════════════════════════════════════════════════════════════════════════════
+// ROOM MANAGEMENT
+// ════════════════════════════════════════════════════════════════════════════
+function renderRooms() {
+  const list = document.getElementById('room-list');
+  const empty = document.getElementById('rooms-empty');
+  if (rooms.length === 0) {
+    empty.style.display = 'block';
+    list.innerHTML = '';
+    list.appendChild(empty);
+    return;
+  }
+  empty.style.display = 'none';
+  list.innerHTML = rooms.map((r, i) => `
+    <div class="room-item ${i === selectedRoomIndex ? 'selected' : ''} ${i === getCurrentRoomIndex() ? 'active-room' : ''}"
+         onclick="selectRoom(${i})" data-index="${i}">
+      <span class="room-name" title="${escHtml(r.name)}">${escHtml(r.name)}</span>
+      <div class="room-actions">
+        <button class="btn sm" onclick="event.stopPropagation();switchRoomTo(${i})" title="Show to players">▶</button>
+        <button class="btn sm" onclick="event.stopPropagation();selectRoom(${i});openEditRoomModal()" title="Edit room">✏</button>
+        <button class="btn sm danger" onclick="event.stopPropagation();deleteRoom('${r.id}')" title="Delete">✕</button>
+      </div>
+    </div>
+  `).join('');
+  list.appendChild(empty);
+}
+
+function getCurrentRoomIndex() {
+  // We don't track this locally but we can guess from the server state
+  return selectedRoomIndex; // simplified
+}
+
+function selectRoom(index) {
+  selectedRoomIndex = index;
+  renderRooms();
+  refreshPreview();
+
+  const hasSel = index >= 0 && rooms[index];
+  document.getElementById('btn-switch-room').style.display = hasSel ? '' : 'none';
+  document.getElementById('btn-edit-room').style.display = hasSel ? '' : 'none';
+  document.getElementById('preview-room-name').textContent = hasSel ? rooms[index].name : '';
+  document.getElementById('preview-empty').style.display = hasSel ? 'none' : '';
+}
+
+function switchCurrentRoom() {
+  if (selectedRoomIndex < 0 || !rooms[selectedRoomIndex]) return;
+  socket.emit('switch-room', { roomIndex: selectedRoomIndex }, (res) => {
+    if (res.error) return showNotif(res.error, true);
+    showNotif(`Switched to "${rooms[selectedRoomIndex].name}"`);
+    renderRooms();
+  });
+}
+
+function switchRoomTo(index) {
+  selectRoom(index);
+  setTimeout(switchCurrentRoom, 50);
+}
+
+function deleteRoom(id) {
+  if (!confirm('Delete this room?')) return;
+  socket.emit('delete-room', { roomId: id }, (res) => {
+    if (res.error) return showNotif(res.error, true);
+    rooms = rooms.filter(r => r.id !== id);
+    if (selectedRoomIndex >= rooms.length) selectedRoomIndex = rooms.length - 1;
+    renderRooms();
+    refreshPreview();
+  });
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// ROOM MODAL
+// ════════════════════════════════════════════════════════════════════════════
+function openAddRoomModal() {
+  editingRoomId = null;
+  document.getElementById('room-modal-title').textContent = 'Add Room';
+  document.getElementById('rm-name').value = '';
+  document.getElementById('rm-bg-url').value = '';
+  document.getElementById('rm-sprite-url').value = '';
+  document.getElementById('rm-mouth-url-1').value = '';
+  document.getElementById('rm-mouth-url-2').value = '';
+  document.getElementById('rm-mouth-url-3').value = '';
+  document.getElementById('rm-mouth-url-4').value = '';
+  document.getElementById('rm-bg-fit').value = 'cover';
+  document.getElementById('rm-sx').value = 75;
+  document.getElementById('rm-sy').value = 80;
+  document.getElementById('rm-sw').value = 280;
+  document.getElementById('rm-sx-val').textContent = '75%';
+  document.getElementById('rm-sy-val').textContent = '80%';
+  document.getElementById('rm-sw-val').textContent = '280px';
+  resetUploadZone('bg-zone', 'bg-preview', 'bg-hint', 'bg-replace');
+  resetUploadZone('sprite-zone', 'sprite-preview', 'sprite-hint', 'sprite-replace');
+  resetUploadZone('mouth1-zone', 'mouth1-preview', 'mouth1-hint', 'mouth1-replace');
+  resetUploadZone('mouth2-zone', 'mouth2-preview', 'mouth2-hint', 'mouth2-replace');
+  resetUploadZone('mouth3-zone', 'mouth3-preview', 'mouth3-hint', 'mouth3-replace');
+  resetUploadZone('mouth4-zone', 'mouth4-preview', 'mouth4-hint', 'mouth4-replace');
+  mouthPosition = { x: 35, y: 55, w: 30, h: 15 };
+  document.getElementById('room-modal').classList.remove('hidden');
+}
+
+function openEditRoomModal() {
+  if (selectedRoomIndex < 0 || !rooms[selectedRoomIndex]) return;
+  const room = rooms[selectedRoomIndex];
+  editingRoomId = room.id;
+  document.getElementById('room-modal-title').textContent = 'Edit Room';
+  document.getElementById('rm-name').value = room.name;
+  document.getElementById('rm-bg-url').value = room.backgroundUrl || '';
+  document.getElementById('rm-sprite-url').value = room.spriteUrl || '';
+  document.getElementById('rm-mouth-url-1').value = room.mouthUrl1 || '';
+  document.getElementById('rm-mouth-url-2').value = room.mouthUrl2 || '';
+  document.getElementById('rm-mouth-url-3').value = room.mouthUrl3 || '';
+  document.getElementById('rm-mouth-url-4').value = room.mouthUrl4 || '';
+  document.getElementById('rm-bg-fit').value = room.bgFit || 'cover';
+  const sp = room.spritePosition || { x: 75, y: 80, w: 280 };
+  document.getElementById('rm-sx').value = sp.x;
+  document.getElementById('rm-sy').value = sp.y;
+  document.getElementById('rm-sw').value = sp.w;
+  document.getElementById('rm-sx-val').textContent = sp.x + '%';
+  document.getElementById('rm-sy-val').textContent = sp.y + '%';
+  document.getElementById('rm-sw-val').textContent = sp.w + 'px';
+  if (room.backgroundUrl) setUploadPreview('bg-zone', 'bg-preview', 'bg-hint', 'bg-replace', room.backgroundUrl);
+  else resetUploadZone('bg-zone', 'bg-preview', 'bg-hint', 'bg-replace');
+  if (room.spriteUrl) setUploadPreview('sprite-zone', 'sprite-preview', 'sprite-hint', 'sprite-replace', room.spriteUrl);
+  else resetUploadZone('sprite-zone', 'sprite-preview', 'sprite-hint', 'sprite-replace');
+  if (room.mouthUrl1) setUploadPreview('mouth1-zone', 'mouth1-preview', 'mouth1-hint', 'mouth1-replace', room.mouthUrl1);
+  else resetUploadZone('mouth1-zone', 'mouth1-preview', 'mouth1-hint', 'mouth1-replace');
+  if (room.mouthUrl2) setUploadPreview('mouth2-zone', 'mouth2-preview', 'mouth2-hint', 'mouth2-replace', room.mouthUrl2);
+  else resetUploadZone('mouth2-zone', 'mouth2-preview', 'mouth2-hint', 'mouth2-replace');
+  if (room.mouthUrl3) setUploadPreview('mouth3-zone', 'mouth3-preview', 'mouth3-hint', 'mouth3-replace', room.mouthUrl3);
+  else resetUploadZone('mouth3-zone', 'mouth3-preview', 'mouth3-hint', 'mouth3-replace');
+  if (room.mouthUrl4) setUploadPreview('mouth4-zone', 'mouth4-preview', 'mouth4-hint', 'mouth4-replace', room.mouthUrl4);
+  else resetUploadZone('mouth4-zone', 'mouth4-preview', 'mouth4-hint', 'mouth4-replace');
+  mouthPosition = room.mouthPosition ? { ...room.mouthPosition } : { x: 35, y: 55, w: 30, h: 15 };
+  document.getElementById('room-modal').classList.remove('hidden');
+}
+
+async function saveRoom() {
+  const data = {
+    name: document.getElementById('rm-name').value || 'Unnamed Room',
+    backgroundUrl: document.getElementById('rm-bg-url').value || null,
+    bgFit: document.getElementById('rm-bg-fit').value,
+    spriteUrl: document.getElementById('rm-sprite-url').value || null,
+    mouthUrl1: document.getElementById('rm-mouth-url-1').value || null,
+    mouthUrl2: document.getElementById('rm-mouth-url-2').value || null,
+    mouthUrl3: document.getElementById('rm-mouth-url-3').value || null,
+    mouthUrl4: document.getElementById('rm-mouth-url-4').value || null,
+    mouthPosition: { ...mouthPosition },
+    spritePosition: {
+      x: parseInt(document.getElementById('rm-sx').value),
+      y: parseInt(document.getElementById('rm-sy').value),
+      w: parseInt(document.getElementById('rm-sw').value)
+    }
+  };
+
+  if (editingRoomId) {
+    socket.emit('update-room', { roomId: editingRoomId, data }, (res) => {
+      if (res.error) return showNotif(res.error, true);
+      const idx = rooms.findIndex(r => r.id === editingRoomId);
+      if (idx !== -1) rooms[idx] = res.room;
+      closeModal('room-modal');
+      renderRooms();
+      refreshPreview();
+    });
+  } else {
+    socket.emit('add-room', { data }, (res) => {
+      if (res.error) return showNotif(res.error, true);
+      rooms = res.rooms;
+      closeModal('room-modal');
+      renderRooms();
+      selectRoom(rooms.length - 1);
+    });
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// MOUTH EDITOR
+// ════════════════════════════════════════════════════════════════════════════
+let mouthDragging = false;
+let mouthResizing = false;
+let mouthDragStart = null;
+let mouthPosAtStart = null;
+
+function openMouthEditor() {
+  const spriteUrl = document.getElementById('rm-sprite-url').value;
+  if (!spriteUrl) return showNotif('Upload a sprite first', true);
+  const img = document.getElementById('mouth-editor-img');
+  img.src = spriteUrl;
+  updateMouthBoxDisplay();
+  document.getElementById('mouth-modal').classList.remove('hidden');
+}
+
+function updateMouthBoxDisplay() {
+  const wrap = document.getElementById('mouth-editor-wrap');
+  const box = document.getElementById('mouth-box');
+  const W = wrap.clientWidth;
+  const H = wrap.clientHeight || 400;
+  box.style.left = (mouthPosition.x / 100 * W) + 'px';
+  box.style.top = (mouthPosition.y / 100 * H) + 'px';
+  box.style.width = (mouthPosition.w / 100 * W) + 'px';
+  box.style.height = (mouthPosition.h / 100 * H) + 'px';
+  document.getElementById('mouth-pos-readout').textContent =
+    `Position: x=${mouthPosition.x.toFixed(1)}% y=${mouthPosition.y.toFixed(1)}% w=${mouthPosition.w.toFixed(1)}% h=${mouthPosition.h.toFixed(1)}%`;
+}
+
+document.getElementById('mouth-box').addEventListener('mousedown', (e) => {
+  if (e.target.id === 'mouth-resize-handle') return;
+  mouthDragging = true;
+  mouthDragStart = { x: e.clientX, y: e.clientY };
+  mouthPosAtStart = { ...mouthPosition };
+  e.preventDefault();
+});
+
+document.getElementById('mouth-resize-handle').addEventListener('mousedown', (e) => {
+  mouthResizing = true;
+  mouthDragStart = { x: e.clientX, y: e.clientY };
+  mouthPosAtStart = { ...mouthPosition };
+  e.stopPropagation();
+  e.preventDefault();
+});
+
+document.addEventListener('mousemove', (e) => {
+  if (!mouthDragging && !mouthResizing) return;
+  const wrap = document.getElementById('mouth-editor-wrap');
+  const rect = wrap.getBoundingClientRect();
+  const dx = (e.clientX - mouthDragStart.x) / rect.width * 100;
+  const dy = (e.clientY - mouthDragStart.y) / rect.height * 100;
+
+  if (mouthDragging) {
+    mouthPosition.x = Math.max(0, Math.min(100 - mouthPosition.w, mouthPosAtStart.x + dx));
+    mouthPosition.y = Math.max(0, Math.min(100 - mouthPosition.h, mouthPosAtStart.y + dy));
+  } else if (mouthResizing) {
+    mouthPosition.w = Math.max(5, Math.min(100 - mouthPosition.x, mouthPosAtStart.w + dx));
+    mouthPosition.h = Math.max(3, Math.min(100 - mouthPosition.y, mouthPosAtStart.h + dy));
+  }
+  updateMouthBoxDisplay();
+});
+
+document.addEventListener('mouseup', () => {
+  mouthDragging = false;
+  mouthResizing = false;
+});
+
+function saveMouthPosition() {
+  closeModal('mouth-modal');
+  showNotif('Mouth position saved');
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// INFO CARDS
+// ════════════════════════════════════════════════════════════════════════════
+function renderCards() {
+  const list = document.getElementById('card-list');
+  const empty = document.getElementById('cards-empty');
+  if (infoCards.length === 0) {
+    empty.style.display = 'block';
+    list.innerHTML = '';
+    list.appendChild(empty);
+    return;
+  }
+  empty.style.display = 'none';
+  list.innerHTML = infoCards.map(c => `
+    <div class="card-item">
+      <div class="card-item-header">
+        <span class="card-item-title">${escHtml(c.title)}</span>
+        <span class="tag ${c.style}">${c.style}</span>
+      </div>
+      <div class="card-item-content">${escHtml(c.content)}</div>
+      <div class="card-item-footer">
+        <button class="toggle-btn ${c.visible ? 'on' : 'off'}" onclick="toggleCard('${c.id}',${!c.visible})">
+          ${c.visible ? '👁 Shown' : '🚫 Hidden'}
+        </button>
+        <button class="btn sm" onclick="openEditCardModal('${c.id}')" style="margin-left:0.2rem">✏</button>
+        <button class="btn sm danger" onclick="deleteCard('${c.id}')" style="margin-left:0.2rem">✕</button>
+      </div>
+    </div>
+  `).join('');
+  list.appendChild(empty);
+}
+
+function toggleCard(id, visible) {
+  socket.emit('toggle-info-card', { cardId: id, visible }, (res) => {
+    if (res.error) return showNotif(res.error, true);
+    const card = infoCards.find(c => c.id === id);
+    if (card) card.visible = res.card.visible;
+    renderCards();
+    refreshPreview();
+  });
+}
+
+function deleteCard(id) {
+  if (!confirm('Delete this card?')) return;
+  socket.emit('delete-info-card', { cardId: id }, (res) => {
+    if (res.error) return showNotif(res.error, true);
+    infoCards = infoCards.filter(c => c.id !== id);
+    renderCards();
+    refreshPreview();
+  });
+}
+
+function openAddCardModal() {
+  editingCardId = null;
+  document.getElementById('card-modal-title').textContent = 'Add Info Card';
+  document.getElementById('cm-title').value = '';
+  document.getElementById('cm-content').value = '';
+  document.getElementById('cm-x').value = 5;
+  document.getElementById('cm-y').value = 5;
+  document.getElementById('cm-x-val').textContent = '5%';
+  document.getElementById('cm-y-val').textContent = '5%';
+  document.querySelectorAll('.style-opt').forEach(el => el.classList.toggle('selected', el.dataset.style === 'parchment'));
+  document.querySelectorAll('.size-opt').forEach(el => el.classList.toggle('selected', el.dataset.size === '1rem'));
+  document.getElementById('card-modal').classList.remove('hidden');
+}
+
+function openEditCardModal(id) {
+  const card = infoCards.find(c => c.id === id);
+  if (!card) return;
+  editingCardId = id;
+  document.getElementById('card-modal-title').textContent = 'Edit Info Card';
+  document.getElementById('cm-title').value = card.title;
+  document.getElementById('cm-content').value = card.content;
+  document.getElementById('cm-x').value = card.position?.x ?? 5;
+  document.getElementById('cm-y').value = card.position?.y ?? 5;
+  document.getElementById('cm-x-val').textContent = (card.position?.x ?? 5) + '%';
+  document.getElementById('cm-y-val').textContent = (card.position?.y ?? 5) + '%';
+  document.querySelectorAll('.style-opt').forEach(el => el.classList.toggle('selected', el.dataset.style === (card.style || 'parchment')));
+  const fs = card.fontSize || '1rem';
+  document.querySelectorAll('.size-opt').forEach(el => el.classList.toggle('selected', el.dataset.size === fs));
+  document.getElementById('card-modal').classList.remove('hidden');
+}
+
+function selectStyle(el) {
+  document.querySelectorAll('.style-opt').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function selectSize(el) {
+  document.querySelectorAll('.size-opt').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function saveCard() {
+  const selectedStyleEl = document.querySelector('.style-opt.selected');
+  const data = {
+    title: document.getElementById('cm-title').value || 'Info',
+    content: document.getElementById('cm-content').value,
+    position: {
+      x: parseInt(document.getElementById('cm-x').value),
+      y: parseInt(document.getElementById('cm-y').value)
+    },
+    style: selectedStyleEl ? selectedStyleEl.dataset.style : 'parchment',
+    fontSize: (document.querySelector('.size-opt.selected') || {}).dataset?.size || '1rem'
+  };
+
+  if (editingCardId) {
+    socket.emit('update-info-card', { cardId: editingCardId, data }, (res) => {
+      if (res.error) return showNotif(res.error, true);
+      closeModal('card-modal');
+    });
+  } else {
+    socket.emit('add-info-card', { data }, (res) => {
+      if (res.error) return showNotif(res.error, true);
+      closeModal('card-modal');
+    });
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// SCENE PREVIEW RENDERER
+// ════════════════════════════════════════════════════════════════════════════
+function fitPreview() {
+  const wrapper = document.getElementById('scene-wrapper');
+  const container = document.getElementById('scene-container');
+  const W = wrapper.clientWidth - 20;
+  const H = wrapper.clientHeight - 20;
+  const aspect = 16 / 9;
+  let w, h;
+  if (W / H > aspect) {
+    h = H; w = h * aspect;
+  } else {
+    w = W; h = w / aspect;
+  }
+  container.style.width = w + 'px';
+  container.style.height = h + 'px';
+  refreshPreview();
+}
+
+function refreshPreview() {
+  const container = document.getElementById('scene-container');
+  const room = rooms[selectedRoomIndex];
+  const empty = document.getElementById('preview-empty');
+
+  // Clear dynamic content (keep preview-empty)
+  Array.from(container.children).forEach(child => {
+    if (child.id !== 'preview-empty') child.remove();
+  });
+
+  if (!room) {
+    empty.style.display = '';
+    return;
+  }
+  empty.style.display = 'none';
+
+  const cW = container.clientWidth;
+  const cH = container.clientHeight;
+
+  // Background
+  if (room.backgroundUrl) {
+    const bg = document.createElement('img');
+    bg.className = 'scene-bg';
+    bg.src = room.backgroundUrl;
+    bg.style.objectFit = room.bgFit || 'cover';
+    container.appendChild(bg);
+  } else {
+    const noBg = document.createElement('div');
+    noBg.className = 'scene-no-bg';
+    noBg.textContent = 'No background set';
+    container.appendChild(noBg);
+  }
+
+  // Sprite
+  if (room.spriteUrl) {
+    const sp = room.spritePosition || { x: 50, y: 80, w: 280 };
+    const scale = cW / 1280; // normalize to 1280 base width
+    const spriteW = sp.w * scale;
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'sprite-wrapper';
+    wrapper.style.left = (sp.x / 100 * cW) + 'px';
+    wrapper.style.top = (sp.y / 100 * cH) + 'px';
+
+    const spriteContainer = document.createElement('div');
+    spriteContainer.className = 'sprite-container';
+    spriteContainer.style.width = spriteW + 'px';
+
+    const spriteImg = document.createElement('img');
+    spriteImg.className = 'sprite-img';
+    spriteImg.src = room.spriteUrl;
+
+    spriteContainer.appendChild(spriteImg);
+
+    // Mouth overlays — 4 tiers
+    const mp = room.mouthPosition || { x: 35, y: 55, w: 30, h: 15 };
+    const mouthUrls = [room.mouthUrl1, room.mouthUrl2, room.mouthUrl3, room.mouthUrl4];
+    mouthUrls.forEach((url, idx) => {
+      if (url) {
+        const el = document.createElement('img');
+        el.className = 'mouth-overlay closed';
+        el.id = `preview-mouth-${idx + 1}`;
+        el.src = url;
+        el.style.left = mp.x + '%';
+        el.style.top = mp.y + '%';
+        el.style.width = mp.w + '%';
+        el.style.height = 'auto';
+        spriteContainer.appendChild(el);
+      }
+    });
+
+    wrapper.appendChild(spriteContainer);
+    container.appendChild(wrapper);
+  }
+
+  // Left secrets panel
+  const secretsPanel = document.createElement('div');
+  secretsPanel.className = 'preview-secrets-panel';
+  const secretsHeader = document.createElement('div');
+  secretsHeader.className = 'preview-secrets-header';
+  secretsHeader.textContent = '📜 Revealed';
+  secretsPanel.appendChild(secretsHeader);
+  const visibleCards = infoCards.filter(c => c.visible);
+  if (visibleCards.length === 0) {
+    const empty = document.createElement('div');
+    empty.style.cssText = 'color:var(--muted);font-style:italic;font-size:0.7rem;padding:0.4rem 0.6rem';
+    empty.textContent = 'Nothing revealed yet…';
+    secretsPanel.appendChild(empty);
+  } else {
+    visibleCards.forEach(c => {
+      const item = document.createElement('div');
+      item.className = `preview-secret-item ${c.style || 'parchment'}`;
+      const t = document.createElement('div');
+      t.className = 'preview-secret-title';
+      t.textContent = c.title;
+      const b = document.createElement('div');
+      b.className = 'preview-secret-body';
+      b.textContent = c.content;
+      if (c.fontSize) b.style.fontSize = c.fontSize;
+      item.appendChild(t);
+      item.appendChild(b);
+      secretsPanel.appendChild(item);
+    });
+  }
+  container.appendChild(secretsPanel);
+}
+
+function getMouthLevel(volume) {
+  if (volume <= 10) return 0;
+  if (volume <= 40) return 1;
+  if (volume <= 60) return 2;
+  if (volume <= 90) return 3;
+  return 4;
+}
+
+function updatePreviewMouth(volume) {
+  const lvl = getMouthLevel(volume);
+  mouthOpen = lvl > 0;
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById(`preview-mouth-${i}`);
+    if (el) el.className = 'mouth-overlay ' + (lvl === i ? 'open' : 'closed');
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// MIC DETECTION
+// ════════════════════════════════════════════════════════════════════════════
+async function toggleMic() {
+  if (micActive) stopMic();
+  else await startMic();
+}
+
+async function startMic() {
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const source = audioCtx.createMediaStreamSource(micStream);
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 256;
+    analyser.smoothingTimeConstant = 0.4;
+    source.connect(analyser);
+    micActive = true;
+    document.getElementById('btn-mic').textContent = 'Stop Mic';
+    document.getElementById('btn-mic').classList.add('active');
+    analyzeMic();
+  } catch (e) {
+    showNotif('Mic access denied', true);
+  }
+}
+
+function stopMic() {
+  if (micAnimFrame) cancelAnimationFrame(micAnimFrame);
+  if (micStream) micStream.getTracks().forEach(t => t.stop());
+  if (audioCtx) audioCtx.close();
+  micActive = false;
+  micStream = null; audioCtx = null; analyser = null;
+  document.getElementById('btn-mic').textContent = 'Start Mic';
+  document.getElementById('btn-mic').classList.remove('active');
+  [0, 1, 2].forEach(i => {
+    const bar = document.getElementById(`mic-bar-${i}`);
+    if (bar) bar.style.background = 'var(--muted)';
+  });
+  lastEmittedVolume = -1;
+  socket.emit('mouth-sync', { volume: 0 });
+  const volDisp = document.getElementById('mic-vol-display');
+  if (volDisp) volDisp.textContent = '—';
+  updatePreviewMouth(0);
+}
+
+let lastEmittedVolume = -1;
+function analyzeMic() {
+  if (!analyser) return;
+  const dataArray = new Uint8Array(analyser.frequencyBinCount);
+  analyser.getByteFrequencyData(dataArray);
+  const volume = Math.round(dataArray.reduce((a, b) => a + b) / dataArray.length);
+  const lvl = getMouthLevel(volume);
+
+  // Update bar indicators (3 bars, light up based on level)
+  const barColors = ['#50c870', '#e8c76a', '#e05050'];
+  [0, 1, 2].forEach(i => {
+    const bar = document.getElementById(`mic-bar-${i}`);
+    if (!bar) return;
+    bar.style.background = lvl > i ? barColors[i] : 'var(--muted)';
+  });
+
+  // Show live volume reading
+  const volDisp = document.getElementById('mic-vol-display');
+  if (volDisp) volDisp.textContent = `vol:${volume}`;
+
+  // Only emit when volume > 10, or when transitioning down to silence
+  if (volume !== lastEmittedVolume) {
+    if (volume > 10) {
+      lastEmittedVolume = volume;
+      socket.emit('mouth-sync', { volume });
+    } else if (lastEmittedVolume > 10) {
+      lastEmittedVolume = volume;
+      socket.emit('mouth-sync', { volume: 0 });
+    } else {
+      lastEmittedVolume = volume;
+    }
+  }
+
+  // Update admin preview
+  updatePreviewMouth(volume);
+  micAnimFrame = requestAnimationFrame(analyzeMic);
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// VEADOTUBE MINI INTEGRATION
+// ════════════════════════════════════════════════════════════════════════════
+function toggleVeadotube() {
+  if (vtConnected) {
+    disconnectVeadotube();
+  } else {
+    connectVeadotube();
+  }
+}
+
+function connectVeadotube() {
+  const url = document.getElementById('vt-url-input').value.trim() || 'ws://localhost:8001';
+  try {
+    vtSocket = new WebSocket(url);
+    document.getElementById('vt-status').textContent = 'Connecting…';
+    document.getElementById('vt-status').style.color = 'var(--gold)';
+
+    vtSocket.onopen = () => {
+      vtConnected = true;
+      document.getElementById('btn-vt').textContent = 'Disconnect';
+      document.getElementById('btn-vt').classList.add('active');
+      document.getElementById('vt-status').textContent = 'Connected';
+      document.getElementById('vt-status').style.color = '#50c870';
+      // Subscribe to state events
+      try { vtSocket.send(JSON.stringify({ event: 'subscribe', data: { kind: 'state' } })); } catch(e) {}
+      showNotif('Veadotube connected');
+    };
+
+    vtSocket.onmessage = (e) => {
+      try {
+        const msg = JSON.parse(e.data);
+        let mouthVal = -1;
+        // Try different message formats
+        if (typeof msg.mouth === 'number') mouthVal = msg.mouth;
+        else if (msg.event === 'payload' && msg.data?.state?.mouth !== undefined) mouthVal = msg.data.state.mouth;
+        else if (msg.data?.mouth !== undefined) mouthVal = msg.data.mouth;
+        else if (msg.talking !== undefined) mouthVal = msg.talking ? 1 : 0;
+        else if (msg.data?.talking !== undefined) mouthVal = msg.data.talking ? 1 : 0;
+
+        if (mouthVal >= 0) {
+          const volume = Math.round(mouthVal * 100);
+          socket.emit('mouth-sync', { volume });
+          updatePreviewMouth(volume > 20);
+        }
+      } catch(e) {}
+    };
+
+    vtSocket.onerror = () => {
+      document.getElementById('vt-status').textContent = 'Error – is Veadotube running?';
+      document.getElementById('vt-status').style.color = '#e05050';
+    };
+
+    vtSocket.onclose = () => {
+      vtConnected = false;
+      document.getElementById('btn-vt').textContent = 'Connect';
+      document.getElementById('btn-vt').classList.remove('active');
+      document.getElementById('vt-status').textContent = 'Disconnected';
+      document.getElementById('vt-status').style.color = 'var(--muted)';
+    };
+  } catch(e) {
+    showNotif('Invalid WebSocket URL', true);
+  }
+}
+
+function disconnectVeadotube() {
+  if (vtSocket) vtSocket.close();
+  vtSocket = null;
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// FILE UPLOAD HELPERS
+// ════════════════════════════════════════════════════════════════════════════
+async function handleUpload(fileInputId, zoneId, hiddenUrlId, previewId) {
+  const fileInput = document.getElementById(fileInputId);
+  const file = fileInput.files[0];
+  if (!file) return;
+
+  const hintId = zoneId.replace('-zone', '-hint');
+  const replaceId = zoneId.replace('-zone', '-replace');
+  document.getElementById(hintId).textContent = 'Uploading…';
+
+  const formData = new FormData();
+  formData.append('image', file);
+
+  try {
+    const res = await fetch('/api/upload', { method: 'POST', body: formData });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    document.getElementById(hiddenUrlId).value = data.url;
+    setUploadPreview(zoneId, previewId, hintId, replaceId, data.url);
+    fileInput.value = ''; // Clear so the same file can be re-selected after room deletion
+    // If this was the sprite upload, update mouth editor image source
+    if (fileInputId === 'sprite-file') {
+      const mouthImg = document.getElementById('mouth-editor-img');
+      if (mouthImg) mouthImg.src = data.url;
+    }
+    refreshPreview();
+  } catch(e) {
+    document.getElementById(hintId).textContent = 'Upload failed';
+  }
+}
+
+function setUploadPreview(zoneId, previewId, hintId, replaceId, url) {
+  const preview = document.getElementById(typeof previewId === 'string' ? previewId : previewId);
+  preview.src = url;
+  preview.classList.remove('hidden');
+  const hint = document.getElementById(typeof hintId === 'string' ? hintId : hintId);
+  hint.textContent = '';
+  const replace = document.getElementById(typeof replaceId === 'string' ? replaceId : replaceId);
+  replace.classList.remove('hidden');
+}
+
+function resetUploadZone(zoneId, previewId, hintId, replaceId) {
+  const preview = document.getElementById(previewId);
+  if (preview) { preview.src = ''; preview.classList.add('hidden'); }
+  const hint = document.getElementById(hintId);
+  if (hint) hint.textContent = 'Click or drop an image';
+  const replace = document.getElementById(replaceId);
+  if (replace) replace.classList.add('hidden');
+  // Clear the file input so the same file can be re-selected after room deletion
+  const zone = document.getElementById(zoneId);
+  if (zone) { const fi = zone.querySelector('input[type=file]'); if (fi) fi.value = ''; }
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// MODAL HELPERS
+// ════════════════════════════════════════════════════════════════════════════
+function closeModal(id) {
+  document.getElementById(id).classList.add('hidden');
+}
+
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.add('hidden');
+  });
+});
+
+// ════════════════════════════════════════════════════════════════════════════
+// NOTIFICATION
+// ════════════════════════════════════════════════════════════════════════════
+let notifTimer = null;
+function showNotif(msg, isError = false) {
+  if (notifTimer) { clearTimeout(notifTimer); document.querySelector('.notification')?.remove(); }
+  const el = document.createElement('div');
+  el.className = 'notification';
+  el.style.borderColor = isError ? '#e05050' : 'var(--gold)';
+  el.style.color = isError ? '#e05050' : 'var(--cream)';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  notifTimer = setTimeout(() => el.remove(), 2500);
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// UTIL
+// ════════════════════════════════════════════════════════════════════════════
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>

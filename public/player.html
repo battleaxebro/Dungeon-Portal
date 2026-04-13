@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DM Screen – Player View</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0a14; --bg2: #12121e;
+      --gold: #c8a743; --gold-light: #e8c76a; --gold-dark: #6a5520;
+      --cream: #e8dcc8; --text: #c8bca8; --muted: #5a5060;
+      --border: rgba(200,167,67,0.25);
+      --radius: 6px;
+    }
+    html, body { height: 100%; overflow: hidden; background: var(--bg); }
+    body { font-family: 'Crimson Text', Georgia, serif; color: var(--cream); }
+
+    /* ── Join form ─────────────────────────────────────────── */
+    #join-overlay {
+      position: fixed; inset: 0; z-index: 100;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+    }
+    #join-overlay::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse at 30% 60%, rgba(139,32,32,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 40%, rgba(32,48,139,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .join-box {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 2.5rem; width: 380px; max-width: 95vw;
+      position: relative; z-index: 1;
+    }
+    .join-box .icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .join-box h2 { font-family: 'Cinzel', serif; color: var(--gold); font-size: 1.4rem; margin-bottom: 0.25rem; }
+    .join-box p { color: var(--text); font-style: italic; margin-bottom: 1.75rem; font-size: 1rem; }
+    .field { margin-bottom: 1rem; }
+    label { display: block; margin-bottom: 0.3rem; color: var(--gold); font-size: 0.8rem;
+            font-family: 'Cinzel', serif; letter-spacing: 0.05em; }
+    input {
+      background: var(--bg); color: var(--cream);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 0.55rem 0.85rem; font-family: inherit; font-size: 1rem; width: 100%;
+      outline: none; transition: border-color 0.15s;
+    }
+    input:focus { border-color: var(--gold); }
+    .btn {
+      font-family: 'Cinzel', serif; font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      border: 1px solid var(--border); border-radius: var(--radius);
+      background: rgba(200,167,67,0.15); color: var(--gold); cursor: pointer;
+      padding: 0.6rem 1.2rem; width: 100%; transition: all 0.15s;
+    }
+    .btn:hover { background: rgba(200,167,67,0.3); border-color: var(--gold); }
+    #join-error { color: #e05050; font-size: 0.85rem; margin-top: 0.5rem; }
+
+    /* ── Scene ─────────────────────────────────────────────── */
+    #scene {
+      position: fixed; inset: 0;
+      background: #050508;
+      display: none;
+    }
+
+    .scene-bg {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; object-fit: cover;
+      transition: opacity 0.5s;
+    }
+
+    .sprite-wrapper {
+      position: absolute;
+      transform: translate(-50%, -100%);
+      transition: left 0.4s ease, top 0.4s ease;
+    }
+    .sprite-container { position: relative; }
+    .sprite-img { display: block; width: 100%; height: auto; }
+    .mouth-overlay {
+      position: absolute; object-fit: contain; pointer-events: none;
+      transition: opacity 0.04s;
+    }
+    .mouth-overlay.open { opacity: 1; }
+    .mouth-overlay.closed { opacity: 0; }
+
+    /* ── Info cards ────────────────────────────────────────── */
+    .info-card-wrap {
+      position: absolute; z-index: 10;
+      animation: cardIn 0.3s ease;
+    }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .info-card {
+      border-radius: 8px; padding: 0.75rem 1rem;
+      max-width: 280px; min-width: 140px;
+      font-size: 0.95rem; line-height: 1.5;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+    }
+    .info-card.parchment {
+      background: rgba(235,215,170,0.95); color: #2a1a08;
+      border: 2px solid rgba(120,80,20,0.5);
+    }
+    .info-card.dark {
+      background: rgba(8,8,18,0.93); color: var(--cream);
+      border: 1px solid var(--gold);
+    }
+    .info-card.arcane {
+      background: rgba(15,8,35,0.93); color: #c0d0ff;
+      border: 1px solid rgba(100,120,255,0.5);
+      box-shadow: 0 0 20px rgba(100,120,255,0.15), 0 4px 24px rgba(0,0,0,0.5);
+    }
+    .info-card-title {
+      font-family: 'Cinzel', serif; font-size: 0.8rem; font-weight: 600;
+      margin-bottom: 0.35rem; letter-spacing: 0.04em;
+    }
+    .info-card.parchment .info-card-title { color: #5a3010; }
+    .info-card.dark .info-card-title { color: var(--gold-light); }
+    .info-card.arcane .info-card-title { color: #90a8ff; }
+    .info-card-content { white-space: pre-wrap; }
+
+    /* ── Status bar ────────────────────────────────────────── */
+    #status-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+      background: rgba(10,10,20,0.85); backdrop-filter: blur(6px);
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 0.75rem; padding: 0.4rem 1rem;
+      font-size: 0.8rem; color: var(--muted);
+      transition: opacity 0.3s;
+    }
+    #status-bar:hover { opacity: 1 !important; }
+    #status-dot { width: 7px; height: 7px; border-radius: 50%; background: #2a7a3a; flex-shrink: 0; }
+    #status-dot.disconnected { background: #8b2020; }
+    #status-dot.waiting { background: var(--gold-dark); }
+    #room-label { color: var(--cream); font-family: 'Cinzel', serif; font-size: 0.75rem; }
+    .sep { color: var(--border); }
+    #player-label { font-style: italic; }
+    #waiting-msg { flex: 1; text-align: center; font-style: italic; }
+
+    /* ── Waiting overlay ───────────────────────────────────── */
+    #waiting-overlay {
+      position: absolute; inset: 0; z-index: 5;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 0.75rem; color: var(--muted);
+    }
+    #waiting-overlay .big { font-size: 4rem; }
+    #waiting-overlay p { font-style: italic; font-size: 1rem; }
+
+    /* ── Secrets panel ─────────────────────────────────── */
+    #secrets-panel {
+      position: fixed; left: 0; top: 0; bottom: 28px; width: 280px; z-index: 10;
+      background: rgba(8,5,2,0.88);
+      border-right: 1px solid rgba(200,167,67,0.25);
+      backdrop-filter: blur(10px);
+      display: flex; flex-direction: column; overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+    #secrets-panel.empty { transform: translateX(-100%); }
+    .secrets-header {
+      padding: 0.6rem 0.9rem; border-bottom: 1px solid rgba(200,167,67,0.2);
+      font-family: 'Cinzel', serif; font-size: 0.75rem; color: var(--gold);
+      letter-spacing: 0.1em; flex-shrink: 0;
+    }
+    #secrets-list { flex: 1; overflow-y: auto; padding: 0.4rem; }
+    .secret-entry {
+      border-radius: 6px; padding: 0.6rem 0.75rem; margin-bottom: 0.4rem;
+      font-size: 0.9rem; line-height: 1.45; animation: cardIn 0.3s ease;
+    }
+    .secret-entry.parchment { background: rgba(232,215,170,0.12); border: 1px solid rgba(180,140,60,0.3); }
+    .secret-entry.dark { background: rgba(10,10,25,0.8); border: 1px solid rgba(200,167,67,0.3); }
+    .secret-entry.arcane { background: rgba(20,10,40,0.8); border: 1px solid rgba(100,120,255,0.3); }
+    .secret-entry-title {
+      font-family: 'Cinzel', serif; font-size: 0.7rem; font-weight: 600; margin-bottom: 0.3rem;
+    }
+    .secret-entry.parchment .secret-entry-title { color: var(--gold-light); }
+    .secret-entry.dark .secret-entry-title { color: var(--gold-light); }
+    .secret-entry.arcane .secret-entry-title { color: #90a8ff; }
+    .secret-entry-body { color: var(--text); white-space: pre-wrap; }
+    .secret-entry.arcane .secret-entry-body { color: #c0d0ff; }
+
+    /* ── Disconnected banner ────────────────────────────────── */
+    #disconn-banner {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      background: rgba(139,32,32,0.95); color: #ffd0d0;
+      text-align: center; padding: 0.6rem; font-family: 'Cinzel', serif;
+      font-size: 0.85rem; display: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ JOIN OVERLAY ══════════════════════════════════════════════════════ -->
+<div id="join-overlay">
+  <div class="join-box">
+    <div class="icon">⚔️</div>
+    <h2>Join Session</h2>
+    <p>Enter the code your DM gave you</p>
+    <div class="field">
+      <label>Session Code</label>
+      <input id="jp-code" placeholder="ABC123" maxlength="6" autocomplete="off"
+             style="text-transform:uppercase;letter-spacing:0.2em;text-align:center;font-size:1.3rem"
+             oninput="this.value=this.value.toUpperCase()">
+    </div>
+    <div class="field">
+      <label>Your Name</label>
+      <input id="jp-name" placeholder="Enter your character or player name…">
+    </div>
+    <button class="btn" onclick="joinSession()">Enter the Realm</button>
+    <div id="join-error"></div>
+  </div>
+</div>
+
+<!-- ═══ SCENE ═════════════════════════════════════════════════════════════ -->
+<div id="scene">
+  <div id="waiting-overlay">
+    <div class="big">🏰</div>
+    <p>Waiting for the DM to show a room…</p>
+  </div>
+  <!-- BG, sprite, mouth, info cards rendered here dynamically -->
+</div>
+
+<!-- ═══ SECRETS PANEL ═══════════════════════════════════════════════════ -->
+<div id="secrets-panel" class="empty">
+  <div class="secrets-header">📜 Revealed Secrets</div>
+  <div id="secrets-list"></div>
+</div>
+
+<!-- ═══ STATUS BAR ════════════════════════════════════════════════════════ -->
+<div id="status-bar" style="display:none">
+  <div id="status-dot"></div>
+  <span id="room-label">—</span>
+  <span class="sep">|</span>
+  <span id="player-label"></span>
+  <span id="waiting-msg" class="hidden"></span>
+</div>
+
+<!-- ═══ DISCONNECTED BANNER ══════════════════════════════════════════════ -->
+<div id="disconn-banner">⚠ DM disconnected — waiting for reconnection…</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+// ════════════════════════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════════════════════════
+const socket = io();
+let sessionCode = null;
+let playerName = null;
+let currentRoom = null;
+let visibleCards = {}; // id -> card data
+let statusHideTimer = null;
+let renderingEnabled = false;
+
+// ════════════════════════════════════════════════════════════════════════════
+// URL PARAM PRE-FILL
+// ════════════════════════════════════════════════════════════════════════════
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  if (code) document.getElementById('jp-code').value = code.toUpperCase();
+})();
+
+// ════════════════════════════════════════════════════════════════════════════
+// JOIN
+// ════════════════════════════════════════════════════════════════════════════
+function joinSession() {
+  const code = document.getElementById('jp-code').value.trim().toUpperCase();
+  const name = document.getElementById('jp-name').value.trim();
+  if (!code) return setError('Enter a session code');
+  if (!name) return setError('Enter your name');
+
+  socket.emit('join-session', { code, playerName: name }, (res) => {
+    if (res.error) return setError(res.error);
+    sessionCode = code;
+    playerName = name;
+
+    renderingEnabled = true;
+    document.getElementById('join-overlay').style.display = 'none';
+    document.getElementById('scene').style.display = 'block';
+    document.getElementById('status-bar').style.display = 'flex';
+    document.getElementById('player-label').textContent = name;
+
+    // Apply current server state
+    const s = res.session;
+    if (s.currentRoom) {
+      renderRoom(s.currentRoom);
+    } else {
+      showWaiting(true);
+    }
+    // Apply visible info cards
+    (s.infoCards || []).forEach(c => { visibleCards[c.id] = c; renderCard(c); });
+
+    showMouth(0);
+    autoFadeStatusBar();
+  });
+}
+
+function setError(msg) {
+  document.getElementById('join-error').textContent = msg;
+}
+
+document.getElementById('jp-name').addEventListener('keydown', e => { if (e.key === 'Enter') joinSession(); });
+document.getElementById('jp-code').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('jp-name').focus(); });
+
+// ════════════════════════════════════════════════════════════════════════════
+// SOCKET EVENTS
+// ════════════════════════════════════════════════════════════════════════════
+socket.on('room-switched', ({ room }) => {
+  renderRoom(room);
+  showWaiting(false);
+});
+
+socket.on('current-room-updated', ({ room }) => {
+  renderRoom(room);
+});
+
+socket.on('room-cleared', () => {
+  currentRoom = null;
+  clearSprite();
+  clearBackground();
+  showWaiting(true);
+  document.getElementById('room-label').textContent = '—';
+});
+
+socket.on('mouth-sync', ({ volume }) => {
+  if (!renderingEnabled) return;
+  showMouth(volume);
+});
+
+socket.on('info-card-update', ({ card }) => {
+  visibleCards[card.id] = card;
+  renderCard(card);
+});
+
+socket.on('info-card-removed', ({ cardId }) => {
+  removeCard(cardId);
+  delete visibleCards[cardId];
+});
+
+socket.on('admin-disconnected', () => {
+  document.getElementById('disconn-banner').textContent = '⚠ DM disconnected — waiting for reconnection…';
+  document.getElementById('disconn-banner').style.display = 'block';
+  document.getElementById('status-dot').className = 'disconnected';
+});
+
+socket.on('session-code-changed', () => {
+  document.getElementById('disconn-banner').textContent = '🎲 The DM generated a new session code — please rejoin with the new code.';
+  document.getElementById('disconn-banner').style.display = 'block';
+  document.getElementById('status-dot').className = 'disconnected';
+  // Fade the scene to indicate session ended
+  document.getElementById('scene').style.opacity = '0.35';
+});
+
+socket.on('connect', () => {
+  document.getElementById('disconn-banner').style.display = 'none';
+  if (sessionCode) {
+    document.getElementById('status-dot').className = '';
+  }
+});
+
+socket.on('disconnect', () => {
+  if (sessionCode) {
+    document.getElementById('status-dot').className = 'disconnected';
+  }
+});
+
+// ════════════════════════════════════════════════════════════════════════════
+// SCENE RENDERING
+// ════════════════════════════════════════════════════════════════════════════
+function renderRoom(room) {
+  currentRoom = room;
+  document.getElementById('room-label').textContent = room.name || '';
+  showWaiting(false);
+
+  // Background
+  renderBackground(room);
+
+  // Sprite
+  renderSprite(room);
+
+  flashStatusBar();
+}
+
+function renderBackground(room) {
+  let bg = document.getElementById('scene-bg');
+  if (room.backgroundUrl) {
+    if (!bg) {
+      bg = document.createElement('img');
+      bg.id = 'scene-bg';
+      bg.className = 'scene-bg';
+      document.getElementById('scene').appendChild(bg);
+    }
+    if (bg.src !== window.location.origin + room.backgroundUrl) {
+      bg.style.opacity = '0';
+      bg.onload = () => { bg.style.opacity = '1'; };
+      bg.src = room.backgroundUrl;
+      bg.style.objectFit = room.bgFit || 'cover';
+    }
+  } else {
+    clearBackground();
+  }
+}
+
+function clearBackground() {
+  const bg = document.getElementById('scene-bg');
+  if (bg) bg.remove();
+}
+
+function renderSprite(room) {
+  clearSprite();
+
+  if (!room.spriteUrl) return;
+
+  const scene = document.getElementById('scene');
+  const sp = room.spritePosition || { x: 75, y: 80, w: 280 };
+  const vW = window.innerWidth;
+  const vH = window.innerHeight;
+  const scale = vW / 1280;
+  const spriteW = sp.w * scale;
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'sprite-wrapper';
+  wrapper.id = 'sprite-wrapper';
+  wrapper.style.left = (sp.x / 100 * vW) + 'px';
+  wrapper.style.top = (sp.y / 100 * vH) + 'px';
+
+  const container = document.createElement('div');
+  container.className = 'sprite-container';
+  container.id = 'sprite-container';
+  container.style.width = spriteW + 'px';
+
+  const img = document.createElement('img');
+  img.className = 'sprite-img';
+  img.src = room.spriteUrl;
+
+  container.appendChild(img);
+
+  // Mouth overlays — 4 tiers, all start closed, showMouth() toggles them
+  const mp = room.mouthPosition || { x: 35, y: 55, w: 30, h: 15 };
+  const mouthUrls = [room.mouthUrl1, room.mouthUrl2, room.mouthUrl3, room.mouthUrl4];
+  mouthUrls.forEach((url, idx) => {
+    if (url) {
+      const el = document.createElement('img');
+      el.id = `mouth-el-${idx + 1}`;
+      el.className = 'mouth-overlay closed';
+      el.src = url;
+      el.style.left = mp.x + '%';
+      el.style.top = mp.y + '%';
+      el.style.width = mp.w + '%';
+      el.style.height = 'auto';
+      container.appendChild(el);
+    }
+  });
+
+  wrapper.appendChild(container);
+  scene.appendChild(wrapper);
+}
+
+function clearSprite() {
+  const el = document.getElementById('sprite-wrapper');
+  if (el) el.remove();
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// MOUTH
+// ════════════════════════════════════════════════════════════════════════════
+function getMouthLevel(volume) {
+  if (volume <= 10) return 0;
+  if (volume <= 40) return 1;
+  if (volume <= 60) return 2;
+  if (volume <= 90) return 3;
+  return 4;
+}
+
+function showMouth(volume) {
+  const lvl = getMouthLevel(volume);
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById(`mouth-el-${i}`);
+    if (el) el.className = 'mouth-overlay ' + (lvl === i ? 'open' : 'closed');
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// INFO CARDS
+// ════════════════════════════════════════════════════════════════════════════
+function renderCard(card) {
+  removeCard(card.id);
+
+  const list = document.getElementById('secrets-list');
+  const entry = document.createElement('div');
+  entry.className = `secret-entry ${card.style || 'parchment'}`;
+  entry.id = 'secret-' + card.id;
+
+  const titleEl = document.createElement('div');
+  titleEl.className = 'secret-entry-title';
+  titleEl.textContent = card.title;
+
+  const bodyEl = document.createElement('div');
+  bodyEl.className = 'secret-entry-body';
+  bodyEl.textContent = card.content;
+  if (card.fontSize) bodyEl.style.fontSize = card.fontSize;
+
+  entry.appendChild(titleEl);
+  entry.appendChild(bodyEl);
+  list.appendChild(entry);
+
+  // Show the panel
+  document.getElementById('secrets-panel').classList.remove('empty');
+}
+
+function removeCard(cardId) {
+  const el = document.getElementById('secret-' + cardId);
+  if (el) {
+    el.style.transition = 'opacity 0.25s, transform 0.25s';
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(-8px)';
+    setTimeout(() => {
+      el.remove();
+      // Hide panel if no entries left
+      if (!document.getElementById('secrets-list').children.length) {
+        document.getElementById('secrets-panel').classList.add('empty');
+      }
+    }, 260);
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// UI HELPERS
+// ════════════════════════════════════════════════════════════════════════════
+function showWaiting(show) {
+  document.getElementById('waiting-overlay').style.display = show ? '' : 'none';
+}
+
+function flashStatusBar() {
+  const bar = document.getElementById('status-bar');
+  bar.style.opacity = '1';
+  clearTimeout(statusHideTimer);
+  statusHideTimer = setTimeout(() => autoFadeStatusBar(), 3000);
+}
+
+function autoFadeStatusBar() {
+  statusHideTimer = setTimeout(() => {
+    document.getElementById('status-bar').style.opacity = '0.35';
+  }, 4000);
+}
+
+// Resize handler: re-render sprite at correct scale
+window.addEventListener('resize', () => {
+  if (currentRoom) renderSprite(currentRoom);
+});
+</script>
+</body>
+</html>

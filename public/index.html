@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DnD DM Screen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a14;
+      --bg2: #12121e;
+      --gold: #c8a743;
+      --gold-light: #e8c76a;
+      --gold-dark: #8a6f2a;
+      --cream: #e8dcc8;
+      --text: #c8bca8;
+      --red: #8b2020;
+      --border: rgba(200, 167, 67, 0.3);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--cream);
+      font-family: 'Crimson Text', Georgia, serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(139, 32, 32, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 50%, rgba(32, 48, 139, 0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .container {
+      text-align: center;
+      padding: 2rem;
+      max-width: 600px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo {
+      font-size: 1.4rem;
+      color: var(--gold);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      font-family: 'Cinzel', serif;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 700;
+      color: var(--cream);
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 40px rgba(200, 167, 67, 0.3);
+    }
+
+    .subtitle {
+      color: var(--text);
+      font-style: italic;
+      font-size: 1.2rem;
+      margin-bottom: 3rem;
+    }
+
+    .divider {
+      width: 200px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 1.5rem auto;
+    }
+
+    .cards {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2rem 2.5rem;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      flex: 1;
+      min-width: 220px;
+      max-width: 260px;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .card:hover {
+      border-color: var(--gold);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 32px rgba(200, 167, 67, 0.15);
+    }
+
+    .card-icon {
+      font-size: 2.5rem;
+      line-height: 1;
+    }
+
+    .card-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .card-desc {
+      font-size: 0.95rem;
+      color: var(--text);
+      font-style: italic;
+    }
+
+    .footer {
+      margin-top: 3rem;
+      font-size: 0.8rem;
+      color: var(--gold-dark);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">⚔️ Dungeons &amp; Dragons</div>
+    <h1>DM Screen</h1>
+    <p class="subtitle">A live visual tool for your campaign</p>
+    <div class="divider"></div>
+    <div class="cards">
+      <a href="/admin" class="card">
+        <div class="card-icon">👑</div>
+        <div class="card-title">Dungeon Master</div>
+        <div class="card-desc">Create &amp; manage your session</div>
+      </a>
+      <a href="/player" class="card">
+        <div class="card-icon">⚔️</div>
+        <div class="card-title">Player</div>
+        <div class="card-desc">Join your DM's session</div>
+      </a>
+    </div>
+    <div class="footer">Powered by DM Screen v1.0</div>
+  </div>
+</body>
+</html>
