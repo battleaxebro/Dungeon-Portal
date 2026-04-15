@@ -79,10 +79,116 @@ app.use(express.json());
 app.use(express.static(publicDir));
 app.use('/uploads', express.static(uploadsDir));
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+const IMAGE_EXTS = /\.(png|jpg|jpeg|gif|webp|svg)$/i;
+
+function toTitleCase(str) {
+  return str.replace(/[_-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()).trim();
+}
+
+function scanAssetDir(subDir) {
+  const dir = path.join(publicDir, 'assets', subDir);
+  if (!fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir, { withFileTypes: true })
+    .filter(e => e.isFile() && IMAGE_EXTS.test(e.name))
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(e => ({
+      id:   path.basename(e.name, path.extname(e.name)),
+      name: toTitleCase(path.basename(e.name, path.extname(e.name))),
+      url:  `/assets/${subDir}/${e.name}`
+    }));
+}
+
+const EXPRESSIONS = ['angry', 'happy', 'sad', 'suspicious'];
+
+// Scan sprites directory — returns flat sprites AND folder-based sprite sets.
+// A sprite set is a subfolder whose default file shares the folder name:
+//   sprites/knight/knight.png          → defaultUrl
+//   sprites/knight/knight_angry.png    → expressions.angry
+//   sprites/knight/knight_happy.png    → expressions.happy  (etc.)
+function scanSpritesDir() {
+  const dir = path.join(publicDir, 'assets', 'sprites');
+  if (!fs.existsSync(dir)) return { sprites: [], spriteSets: [] };
+
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  const sprites    = [];
+  const spriteSets = [];
+
+  entries.forEach(entry => {
+    if (entry.isDirectory()) {
+      const folderName = entry.name;
+      const folderDir  = path.join(dir, folderName);
+      const files = fs.readdirSync(folderDir).filter(f => IMAGE_EXTS.test(f));
+
+      // Find the default file — same basename as the folder (case-insensitive)
+      const defaultFile = files.find(f =>
+        path.basename(f, path.extname(f)).toLowerCase() === folderName.toLowerCase()
+      );
+      if (!defaultFile) return; // folder must have a matching default file
+
+      const set = {
+        id:         folderName.toLowerCase(),
+        name:       toTitleCase(folderName),
+        defaultUrl: `/assets/sprites/${folderName}/${defaultFile}`,
+        expressions: {}
+      };
+
+      // Find expression variants: foldername_angry.ext, etc.
+      EXPRESSIONS.forEach(expr => {
+        const exprFile = files.find(f =>
+          path.basename(f, path.extname(f)).toLowerCase() === `${folderName.toLowerCase()}_${expr}`
+        );
+        if (exprFile) {
+          set.expressions[expr] = `/assets/sprites/${folderName}/${exprFile}`;
+        }
+      });
+
+      spriteSets.push(set);
+
+    } else if (entry.isFile() && IMAGE_EXTS.test(entry.name)) {
+      // Flat file in root sprites/ — kept for backward compatibility
+      const id = path.basename(entry.name, path.extname(entry.name));
+      sprites.push({ id, name: toTitleCase(id), url: `/assets/sprites/${entry.name}` });
+    }
+  });
+
+  sprites.sort((a, b) => a.name.localeCompare(b.name));
+  spriteSets.sort((a, b) => a.name.localeCompare(b.name));
+  return { sprites, spriteSets };
+}
+
+const TIER_LABELS = ['Resting (1–10)', 'Talking (11–40)', 'Medium (41–60)', 'Loud (61+)'];
+
 // ─── Routes ───────────────────────────────────────────────────────────────────
 app.post('/api/upload', upload.single('image'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   res.json({ url: `/uploads/${req.file.filename}` });
+});
+
+// Auto-discover assets from disk — no manifest editing needed
+app.get('/api/assets', (req, res) => {
+  const { sprites, spriteSets } = scanSpritesDir();
+  const backgrounds = scanAssetDir('backgrounds');
+
+  // Group mouth files into sets by naming convention: setname_1.ext … setname_4.ext
+  const mouthFiles = scanAssetDir('mouths');
+  const setMap = {};
+  mouthFiles.forEach(m => {
+    const match = m.id.match(/^(.+)_([1-4])$/);
+    if (!match) return; // skip files that don't follow the convention
+    const [, prefix, tierStr] = match;
+    const tier = parseInt(tierStr);
+    const key = prefix.toLowerCase(); // case-insensitive grouping
+    if (!setMap[key]) {
+      setMap[key] = { id: key, name: toTitleCase(prefix), description: '', mouths: [] };
+    }
+    setMap[key].mouths.push({ tier, label: TIER_LABELS[tier - 1] || `Tier ${tier}`, url: m.url });
+  });
+  const mouthSets = Object.values(setMap)
+    .filter(s => s.mouths.length > 0)
+    .map(s => ({ ...s, mouths: s.mouths.sort((a, b) => a.tier - b.tier) }));
+
+  res.json({ sprites, spriteSets, backgrounds, mouthSets });
 });
 
 app.get('/admin', (req, res) => res.sendFile(path.join(publicDir, 'admin.html')));
@@ -159,6 +265,14 @@ io.on('connection', (socket) => {
       backgroundUrl: data.backgroundUrl || null,
       bgFit: data.bgFit || 'cover',
       spriteUrl: data.spriteUrl || null,
+      spriteAngryUrl: data.spriteAngryUrl || null,
+      spriteHappyUrl: data.spriteHappyUrl || null,
+      spriteSadUrl: data.spriteSadUrl || null,
+      spriteSuspiciousUrl: data.spriteSuspiciousUrl || null,
+      charName: data.charName || '',
+      charTitle: data.charTitle || '',
+      charAffiliation: data.charAffiliation || '',
+      currentExpression: 'default',
       mouthUrl1: data.mouthUrl1 || null,
       mouthUrl2: data.mouthUrl2 || null,
       mouthUrl3: data.mouthUrl3 || null,
@@ -287,6 +401,19 @@ io.on('connection', (socket) => {
     }
   });
 
+  // ── Admin: set character expression ──────────────────────────────────────
+  socket.on('set-expression', ({ expression }, cb) => {
+    const code = adminSockets[socket.id];
+    if (!code || !sessions[code]) return cb && cb({ error: 'Not authorized' });
+    const session = sessions[code];
+    const idx = session.currentRoomIndex;
+    if (idx >= 0 && session.rooms[idx]) {
+      session.rooms[idx].currentExpression = expression;
+    }
+    socket.to(code).emit('expression-changed', { expression });
+    if (cb) cb({ success: true });
+  });
+
   // ── Admin: mouth sync (raw volume integer) ────────────────────────────────
   socket.on('mouth-sync', ({ volume }) => {
     const code = adminSockets[socket.id];
@@ -317,7 +444,7 @@ io.on('connection', (socket) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`\n🎲 DnD DM Screen running at http://localhost:${PORT}`);
+  console.log(`\n🎲 Dungeon Portal running at http://localhost:${PORT}`);
   console.log(`   Admin page:  http://localhost:${PORT}/admin`);
   console.log(`   Player page: http://localhost:${PORT}/player\n`);
 });

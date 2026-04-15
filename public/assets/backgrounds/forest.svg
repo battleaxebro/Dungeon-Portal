@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720">
+  <defs>
+    <linearGradient id="fSky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0a1a2a"/><stop offset="60%" stop-color="#1a3a2a"/><stop offset="100%" stop-color="#2a4a1a"/>
+    </linearGradient>
+    <linearGradient id="fGround" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2a4a1a"/><stop offset="100%" stop-color="#1a2e0e"/>
+    </linearGradient>
+    <radialGradient id="fMoon" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#e8f0c0"/><stop offset="100%" stop-color="#c0d080"/>
+    </radialGradient>
+    <radialGradient id="fGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#80c060" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#80c060" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Sky -->
+  <rect width="1280" height="720" fill="url(#fSky)"/>
+  <!-- Stars -->
+  <circle cx="120" cy="40" r="1.5" fill="white" opacity="0.8"/>
+  <circle cx="340" cy="25" r="1" fill="white" opacity="0.6"/>
+  <circle cx="580" cy="55" r="1.5" fill="white" opacity="0.7"/>
+  <circle cx="820" cy="30" r="1" fill="white" opacity="0.5"/>
+  <circle cx="1050" cy="48" r="1.5" fill="white" opacity="0.8"/>
+  <circle cx="1180" cy="22" r="1" fill="white" opacity="0.6"/>
+  <circle cx="210" cy="70" r="1" fill="white" opacity="0.4"/>
+  <circle cx="760" cy="62" r="1" fill="white" opacity="0.5"/>
+  <!-- Moon -->
+  <circle cx="960" cy="80" r="48" fill="url(#fMoon)" opacity="0.85"/>
+  <circle cx="980" cy="66" r="42" fill="#1a3a2a" opacity="0.6"/>
+  <!-- Mist layer -->
+  <ellipse cx="640" cy="380" rx="700" ry="120" fill="#c0d8b0" opacity="0.12"/>
+  <ellipse cx="200" cy="420" rx="300" ry="80" fill="#c0d8b0" opacity="0.1"/>
+  <ellipse cx="1080" cy="400" rx="280" ry="70" fill="#c0d8b0" opacity="0.1"/>
+  <!-- Background trees (far) -->
+  <rect x="60" y="280" width="28" height="220" fill="#1a2e12"/>
+  <polygon points="74,160 20,300 128,300" fill="#223818"/>
+  <polygon points="74,210 30,320 118,320" fill="#1e3214"/>
+  <rect x="200" y="300" width="24" height="200" fill="#1a2e12"/>
+  <polygon points="212,190 164,310 260,310" fill="#223818"/>
+  <polygon points="212,240 172,325 252,325" fill="#1e3214"/>
+  <rect x="380" y="270" width="30" height="230" fill="#1a2e12"/>
+  <polygon points="395,145 340,285 450,285" fill="#203416"/>
+  <polygon points="395,200 348,300 442,300" fill="#1e3012"/>
+  <rect x="900" y="275" width="28" height="225" fill="#1a2e12"/>
+  <polygon points="914,150 860,285 968,285" fill="#223818"/>
+  <polygon points="914,205 868,300 960,300" fill="#1e3214"/>
+  <rect x="1080" y="290" width="26" height="210" fill="#1a2e12"/>
+  <polygon points="1093,175 1044,300 1142,300" fill="#203416"/>
+  <rect x="1200" y="300" width="22" height="200" fill="#1a2e12"/>
+  <polygon points="1211,195 1168,308 1254,308" fill="#223818"/>
+  <!-- Midground trees (larger) -->
+  <rect x="0" y="310" width="36" height="410" fill="#162408"/>
+  <polygon points="18,170 -30,330 66,330" fill="#1c3010"/>
+  <polygon points="18,230 -20,340 56,340" fill="#182c0c"/>
+  <rect x="540" y="295" width="38" height="425" fill="#162408"/>
+  <polygon points="559,148 498,308 620,308" fill="#1c3010"/>
+  <polygon points="559,210 506,318 612,318" fill="#182c0c"/>
+  <rect x="760" y="285" width="36" height="435" fill="#162408"/>
+  <polygon points="778,138 718,298 838,298" fill="#1e3412"/>
+  <polygon points="778,200 724,308 832,308" fill="#1a3010"/>
+  <rect x="1240" y="300" width="40" height="420" fill="#162408"/>
+  <polygon points="1260,155 1204,312 1316,312" fill="#1c3010"/>
+  <!-- Foreground ground -->
+  <path d="M0 480 Q180 450 360 470 Q540 490 640 460 Q780 430 960 465 Q1100 480 1280 455 L1280 720 L0 720 Z" fill="url(#fGround)"/>
+  <!-- Ground details / roots -->
+  <path d="M0 510 Q100 490 200 505 Q300 520 400 498" fill="none" stroke="#2a4a1a" stroke-width="3" opacity="0.5"/>
+  <path d="M600 490 Q700 475 800 488 Q900 500 1000 482" fill="none" stroke="#2a4a1a" stroke-width="3" opacity="0.5"/>
+  <!-- Glowing mushrooms -->
+  <ellipse cx="430" cy="512" rx="14" ry="8" fill="#80ff80" opacity="0.5"/>
+  <rect x="427" y="504" width="6" height="10" rx="3" fill="#60cc60" opacity="0.7"/>
+  <ellipse cx="430" cy="504" rx="14" ry="8" fill="#a0ff80" opacity="0.6"/>
+  <ellipse cx="430" cy="504" rx="20" ry="16" fill="url(#fGlow)"/>
+  <ellipse cx="850" cy="498" rx="12" ry="7" fill="#80ff80" opacity="0.5"/>
+  <rect x="847" y="491" width="6" height="9" rx="3" fill="#60cc60" opacity="0.7"/>
+  <ellipse cx="850" cy="491" rx="12" ry="7" fill="#a0ff80" opacity="0.6"/>
+  <ellipse cx="850" cy="491" rx="18" ry="14" fill="url(#fGlow)"/>
+  <!-- Path through forest -->
+  <path d="M560 720 Q580 620 620 530 Q650 470 640 460 Q630 470 660 530 Q700 620 720 720" fill="#1e3a10" opacity="0.7"/>
+  <!-- Atmospheric green overlay -->
+  <rect width="1280" height="720" fill="#204020" opacity="0.08"/>
+</svg>

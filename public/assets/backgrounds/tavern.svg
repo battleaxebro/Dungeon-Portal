@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720">
+  <defs>
+    <linearGradient id="tFloor" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#8B5e34"/><stop offset="100%" stop-color="#5a3a18"/>
+    </linearGradient>
+    <radialGradient id="tFire" cx="50%" cy="100%" r="80%">
+      <stop offset="0%" stop-color="#ff8800" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#ff8800" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="tLantern" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffa000" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#ffa000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Wall -->
+  <rect width="1280" height="720" fill="#4a2c14"/>
+  <!-- Wall planks -->
+  <rect x="0" y="0" width="1280" height="450" fill="#4a2c14"/>
+  <line x1="0" y1="60" x2="1280" y2="60" stroke="#3a200c" stroke-width="3" opacity="0.7"/>
+  <line x1="0" y1="120" x2="1280" y2="120" stroke="#3a200c" stroke-width="3" opacity="0.7"/>
+  <line x1="0" y1="180" x2="1280" y2="180" stroke="#3a200c" stroke-width="3" opacity="0.7"/>
+  <line x1="0" y1="240" x2="1280" y2="240" stroke="#3a200c" stroke-width="3" opacity="0.7"/>
+  <line x1="0" y1="300" x2="1280" y2="300" stroke="#3a200c" stroke-width="3" opacity="0.7"/>
+  <line x1="0" y1="360" x2="1280" y2="360" stroke="#3a200c" stroke-width="3" opacity="0.7"/>
+  <line x1="0" y1="420" x2="1280" y2="420" stroke="#3a200c" stroke-width="3" opacity="0.7"/>
+  <!-- Overhead beams -->
+  <rect x="0" y="0" width="1280" height="36" fill="#1e0e04"/>
+  <rect x="0" y="0" width="46" height="450" fill="#1e0e04" opacity="0.7"/>
+  <rect x="200" y="0" width="38" height="450" fill="#1e0e04" opacity="0.6"/>
+  <rect x="560" y="0" width="38" height="450" fill="#1e0e04" opacity="0.6"/>
+  <rect x="920" y="0" width="38" height="450" fill="#1e0e04" opacity="0.6"/>
+  <rect x="1234" y="0" width="46" height="450" fill="#1e0e04" opacity="0.7"/>
+  <!-- Fireplace right wall -->
+  <rect x="980" y="200" width="220" height="210" fill="#0e0604"/>
+  <path d="M1002 408 Q1025 358 1048 315 Q1060 365 1070 325 Q1085 372 1092 318 Q1105 368 1090 410 Z" fill="#ff6600" opacity="0.9"/>
+  <path d="M1015 408 Q1038 370 1055 335 Q1068 372 1075 410 Z" fill="#ffaa00" opacity="0.8"/>
+  <path d="M1030 408 Q1048 378 1060 358 Q1072 382 1065 408 Z" fill="#ffdd44" opacity="0.65"/>
+  <rect x="972" y="192" width="236" height="18" rx="4" fill="#5a3010"/>
+  <rect x="968" y="192" width="244" height="222" fill="none" stroke="#5a3010" stroke-width="8"/>
+  <!-- Fire glow -->
+  <ellipse cx="1090" cy="350" rx="380" ry="380" fill="url(#tFire)"/>
+  <!-- Bar counter left -->
+  <rect x="0" y="408" width="365" height="312" fill="#5a3010"/>
+  <rect x="0" y="402" width="375" height="16" rx="3" fill="#7a4818"/>
+  <ellipse cx="55" cy="476" rx="30" ry="36" fill="#6a3810"/>
+  <ellipse cx="55" cy="443" rx="28" ry="8" fill="#7a4818"/>
+  <ellipse cx="128" cy="466" rx="28" ry="33" fill="#5a3010"/>
+  <ellipse cx="128" cy="436" rx="26" ry="8" fill="#6a3810"/>
+  <ellipse cx="55" cy="476" rx="30" ry="10" fill="none" stroke="#8B5e20" stroke-width="2.5"/>
+  <ellipse cx="128" cy="466" rx="28" ry="10" fill="none" stroke="#8B5e20" stroke-width="2.5"/>
+  <!-- Floor -->
+  <rect x="0" y="450" width="1280" height="270" fill="url(#tFloor)"/>
+  <line x1="0" y1="490" x2="1280" y2="490" stroke="#6a4818" stroke-width="2" opacity="0.6"/>
+  <line x1="0" y1="540" x2="1280" y2="540" stroke="#6a4818" stroke-width="2" opacity="0.6"/>
+  <line x1="0" y1="590" x2="1280" y2="590" stroke="#6a4818" stroke-width="2" opacity="0.6"/>
+  <line x1="0" y1="640" x2="1280" y2="640" stroke="#6a4818" stroke-width="2" opacity="0.6"/>
+  <line x1="0" y1="690" x2="1280" y2="690" stroke="#6a4818" stroke-width="2" opacity="0.6"/>
+  <line x1="250" y1="450" x2="250" y2="720" stroke="#6a4818" stroke-width="1.5" opacity="0.5"/>
+  <line x1="520" y1="450" x2="520" y2="720" stroke="#6a4818" stroke-width="1.5" opacity="0.5"/>
+  <line x1="780" y1="450" x2="780" y2="720" stroke="#6a4818" stroke-width="1.5" opacity="0.5"/>
+  <line x1="1040" y1="450" x2="1040" y2="720" stroke="#6a4818" stroke-width="1.5" opacity="0.5"/>
+  <!-- Center table -->
+  <ellipse cx="660" cy="545" rx="115" ry="42" fill="#5a3010"/>
+  <rect x="545" y="542" width="230" height="16" rx="4" fill="#6a3a14"/>
+  <rect x="624" y="558" width="16" height="82" rx="5" fill="#4a2808"/>
+  <rect x="660" y="558" width="16" height="82" rx="5" fill="#4a2808"/>
+  <!-- Hanging lanterns -->
+  <line x1="650" y1="36" x2="650" y2="96" stroke="#2a1006" stroke-width="3"/>
+  <rect x="630" y="96" width="40" height="50" rx="6" fill="#c8a020" opacity="0.75"/>
+  <rect x="634" y="100" width="32" height="42" rx="4" fill="#ff9900" opacity="0.7"/>
+  <ellipse cx="650" cy="146" rx="20" ry="6" fill="#a07010" opacity="0.55"/>
+  <line x1="310" y1="36" x2="310" y2="86" stroke="#2a1006" stroke-width="3"/>
+  <rect x="292" y="86" width="36" height="44" rx="5" fill="#c8a020" opacity="0.75"/>
+  <rect x="296" y="90" width="28" height="36" rx="3" fill="#ff9900" opacity="0.65"/>
+  <!-- Lantern glows -->
+  <ellipse cx="650" cy="130" rx="200" ry="170" fill="url(#tLantern)"/>
+  <ellipse cx="310" cy="116" rx="160" ry="140" fill="url(#tLantern)"/>
+  <!-- Warm overlay -->
+  <rect width="1280" height="720" fill="#ff8800" opacity="0.07"/>
+</svg>

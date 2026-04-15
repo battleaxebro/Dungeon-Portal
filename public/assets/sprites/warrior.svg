@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 440">
+  <defs>
+    <linearGradient id="wArmor" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#5a6070"/><stop offset="50%" stop-color="#7a8090"/><stop offset="100%" stop-color="#5a6070"/>
+    </linearGradient>
+    <linearGradient id="wSkin" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#d4956a"/><stop offset="100%" stop-color="#b87545"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="100" cy="432" rx="55" ry="8" fill="rgba(0,0,0,0.25)"/>
+  <!-- Boots -->
+  <rect x="68" y="360" width="30" height="34" rx="7" fill="#2a2030"/>
+  <rect x="102" y="360" width="30" height="34" rx="7" fill="#2a2030"/>
+  <!-- Legs -->
+  <rect x="72" y="280" width="26" height="88" rx="5" fill="#5a6070"/>
+  <rect x="102" y="280" width="26" height="88" rx="5" fill="#4e5464"/>
+  <!-- Belt -->
+  <rect x="56" y="272" width="88" height="16" rx="4" fill="#7a5010"/>
+  <rect x="88" y="272" width="24" height="16" fill="#c8a720"/>
+  <circle cx="100" cy="280" r="5" fill="#8B6914"/>
+  <!-- Body armor -->
+  <path d="M46 142 Q100 126 154 142 L162 278 L38 278 Z" fill="url(#wArmor)"/>
+  <!-- Chest plate -->
+  <path d="M66 155 Q100 146 134 155 L138 260 L62 260 Z" fill="#8a9aaa"/>
+  <path d="M66 155 Q100 146 134 155 L138 260 L62 260 Z" fill="none" stroke="#c8a720" stroke-width="2"/>
+  <line x1="100" y1="150" x2="100" y2="262" stroke="#c8a720" stroke-width="1.5" opacity="0.7"/>
+  <!-- Pauldrons -->
+  <ellipse cx="46" cy="146" rx="28" ry="15" fill="#7a8090"/>
+  <path d="M22 138 Q46 124 70 138" fill="none" stroke="#c8a720" stroke-width="2"/>
+  <ellipse cx="154" cy="146" rx="28" ry="15" fill="#7a8090"/>
+  <path d="M130 138 Q154 124 178 138" fill="none" stroke="#c8a720" stroke-width="2"/>
+  <!-- Arms -->
+  <path d="M46 150 L20 236 L38 244 L62 166" fill="#6a7080"/>
+  <path d="M154 150 L180 236 L162 244 L138 166" fill="#6a7080"/>
+  <!-- Gauntlets -->
+  <ellipse cx="26" cy="248" rx="15" ry="11" fill="#5a6070"/>
+  <ellipse cx="174" cy="248" rx="15" ry="11" fill="#5a6070"/>
+  <!-- Neck -->
+  <rect x="87" y="116" width="26" height="30" rx="4" fill="url(#wSkin)"/>
+  <!-- Head (smooth lower jaw — mouthless) -->
+  <ellipse cx="100" cy="92" rx="36" ry="40" fill="url(#wSkin)"/>
+  <path d="M70 108 Q100 124 130 108 L128 118 Q100 130 72 118 Z" fill="#c4855a"/>
+  <!-- Ears -->
+  <ellipse cx="64" cy="93" rx="8" ry="10" fill="#c4855a"/>
+  <ellipse cx="136" cy="93" rx="8" ry="10" fill="#c4855a"/>
+  <!-- Helmet -->
+  <path d="M64 74 Q100 33 136 74 L139 106 Q100 100 61 106 Z" fill="#6a7080"/>
+  <rect x="62" y="98" width="76" height="14" rx="3" fill="#7a8090"/>
+  <!-- Plume -->
+  <path d="M88 33 Q96 10 104 22 Q112 10 120 30 Q108 40 100 35 Q92 40 88 33" fill="#c01010"/>
+  <!-- Visor slits -->
+  <rect x="74" y="91" width="20" height="5" rx="2.5" fill="#1a1a2a"/>
+  <rect x="106" y="91" width="20" height="5" rx="2.5" fill="#1a1a2a"/>
+  <!-- Shield -->
+  <path d="M8 210 L8 264 Q20 278 26 264 L26 210 Q20 202 8 210 Z" fill="#8B4010"/>
+  <path d="M11 213 L11 261 Q20 273 24 261 L24 213 Q20 206 11 213 Z" fill="#a06030"/>
+  <path d="M17 217 L17 267 M11 242 L24 242" stroke="#c8a720" stroke-width="2.5"/>
+  <!-- Sword -->
+  <rect x="167" y="194" width="5" height="80" rx="2" fill="#d8d8e8"/>
+  <rect x="157" y="218" width="24" height="6" rx="3" fill="#8B6914"/>
+  <ellipse cx="170" cy="194" rx="5" ry="7" fill="#c8a720"/>
+</svg>

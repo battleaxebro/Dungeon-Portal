@@ -1,0 +1,38 @@
+{
+  "sprites": [
+    { "id": "warrior",   "name": "Warrior",   "url": "/assets/sprites/warrior.svg",   "tags": ["hero","armored"] },
+    { "id": "mage",      "name": "Mage",       "url": "/assets/sprites/mage.svg",      "tags": ["hero","caster"] },
+    { "id": "rogue",     "name": "Rogue",      "url": "/assets/sprites/rogue.svg",     "tags": ["hero","stealth"] },
+    { "id": "innkeeper", "name": "Innkeeper",  "url": "/assets/sprites/innkeeper.svg", "tags": ["npc","friendly"] }
+  ],
+  "backgrounds": [
+    { "id": "tavern",   "name": "Tavern",         "url": "/assets/backgrounds/tavern.svg",   "tags": ["interior","warm"] },
+    { "id": "dungeon",  "name": "Dungeon",         "url": "/assets/backgrounds/dungeon.svg",  "tags": ["interior","dark"] },
+    { "id": "forest",   "name": "Mystic Forest",   "url": "/assets/backgrounds/forest.svg",   "tags": ["outdoor","nature"] },
+    { "id": "castle",   "name": "Castle Throne",   "url": "/assets/backgrounds/castle.svg",   "tags": ["interior","grand"] }
+  ],
+  "mouthSets": [
+    {
+      "id": "classic",
+      "name": "Classic",
+      "description": "Simple rounded shapes",
+      "mouths": [
+        { "tier": 1, "label": "Resting (1–10)",  "url": "/assets/mouths/classic_1.svg" },
+        { "tier": 2, "label": "Talking (11–40)", "url": "/assets/mouths/classic_2.svg" },
+        { "tier": 3, "label": "Medium (41–60)",  "url": "/assets/mouths/classic_3.svg" },
+        { "tier": 4, "label": "Loud (61+)",      "url": "/assets/mouths/classic_4.svg" }
+      ]
+    },
+    {
+      "id": "fangs",
+      "name": "Fangs",
+      "description": "Monstrous / undead style",
+      "mouths": [
+        { "tier": 1, "label": "Resting (1–10)",  "url": "/assets/mouths/fangs_1.svg" },
+        { "tier": 2, "label": "Talking (11–40)", "url": "/assets/mouths/fangs_2.svg" },
+        { "tier": 3, "label": "Medium (41–60)",  "url": "/assets/mouths/fangs_3.svg" },
+        { "tier": 4, "label": "Loud (61+)",      "url": "/assets/mouths/fangs_4.svg" }
+      ]
+    }
+  ]
+}

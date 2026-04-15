@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 440">
+  <defs>
+    <linearGradient id="rCloak" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#181820"/><stop offset="50%" stop-color="#282830"/><stop offset="100%" stop-color="#181820"/>
+    </linearGradient>
+    <linearGradient id="rLeather" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#5a3a1a"/><stop offset="100%" stop-color="#3a2010"/>
+    </linearGradient>
+    <linearGradient id="rSkin" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#c8906a"/><stop offset="100%" stop-color="#a87050"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="100" cy="432" rx="44" ry="7" fill="rgba(0,0,0,0.25)"/>
+  <!-- Boots -->
+  <rect x="72" y="355" width="24" height="40" rx="6" fill="#1e1008"/>
+  <rect x="104" y="355" width="24" height="40" rx="6" fill="#1e1008"/>
+  <!-- Legs -->
+  <rect x="76" y="272" width="22" height="90" rx="5" fill="#3a2a1a"/>
+  <rect x="102" y="272" width="22" height="90" rx="5" fill="#321a0c"/>
+  <!-- Belt -->
+  <rect x="55" y="264" width="90" height="14" rx="4" fill="#4a3010"/>
+  <rect x="60" y="264" width="16" height="14" rx="3" fill="#5a3a18"/>
+  <rect x="124" y="264" width="16" height="14" rx="3" fill="#5a3a18"/>
+  <!-- Body leather -->
+  <path d="M58 140 Q100 128 142 140 L147 276 L53 276 Z" fill="url(#rLeather)"/>
+  <!-- Armor straps -->
+  <line x1="78" y1="143" x2="78" y2="268" stroke="#6a4a2a" stroke-width="2" opacity="0.6"/>
+  <line x1="122" y1="143" x2="122" y2="268" stroke="#6a4a2a" stroke-width="2" opacity="0.6"/>
+  <line x1="58" y1="185" x2="142" y2="185" stroke="#6a4a2a" stroke-width="1.5" opacity="0.5"/>
+  <line x1="58" y1="225" x2="142" y2="225" stroke="#6a4a2a" stroke-width="1.5" opacity="0.5"/>
+  <!-- Cloak panels -->
+  <path d="M40 143 Q18 202 14 316 L56 296 L53 276" fill="url(#rCloak)" opacity="0.92"/>
+  <path d="M160 143 Q182 202 186 316 L144 296 L147 276" fill="url(#rCloak)" opacity="0.92"/>
+  <!-- Arms -->
+  <path d="M58 144 L34 230 L50 238 L68 162" fill="#3a2a1a"/>
+  <path d="M142 144 L166 230 L150 238 L132 162" fill="#3a2a1a"/>
+  <!-- Hands -->
+  <ellipse cx="40" cy="244" rx="12" ry="10" fill="url(#rSkin)"/>
+  <ellipse cx="160" cy="244" rx="12" ry="10" fill="url(#rSkin)"/>
+  <!-- Daggers -->
+  <rect x="28" y="228" width="4" height="38" rx="2" fill="#c0c0c8"/>
+  <rect x="22" y="236" width="16" height="4" rx="2" fill="#6a4a1a"/>
+  <rect x="168" y="228" width="4" height="38" rx="2" fill="#c0c0c8"/>
+  <rect x="162" y="236" width="16" height="4" rx="2" fill="#6a4a1a"/>
+  <!-- Neck -->
+  <rect x="87" y="112" width="26" height="32" rx="4" fill="url(#rSkin)"/>
+  <!-- Head (smooth lower face) -->
+  <ellipse cx="100" cy="88" rx="30" ry="34" fill="url(#rSkin)"/>
+  <path d="M76 104 Q100 118 124 104 L122 114 Q100 124 78 114 Z" fill="#b87858"/>
+  <!-- Hood shadow -->
+  <ellipse cx="100" cy="76" rx="25" ry="15" fill="rgba(0,0,0,0.35)"/>
+  <!-- Eyes in shadow -->
+  <ellipse cx="88" cy="80" rx="5" ry="4" fill="#1a1a2a"/>
+  <ellipse cx="112" cy="80" rx="5" ry="4" fill="#1a1a2a"/>
+  <circle cx="89" cy="79" r="1.5" fill="#c8a720" opacity="0.9"/>
+  <circle cx="113" cy="79" r="1.5" fill="#c8a720" opacity="0.9"/>
+  <!-- Hood -->
+  <path d="M60 84 Q68 48 100 38 Q132 48 140 84 L138 106 Q100 98 62 106 Z" fill="#181820"/>
+  <path d="M60 84 Q68 48 100 38 Q132 48 140 84" fill="none" stroke="#303040" stroke-width="2"/>
+  <!-- Cloak collar -->
+  <path d="M44 120 Q100 108 156 120 L154 142 Q100 130 46 142 Z" fill="#202028"/>
+</svg>

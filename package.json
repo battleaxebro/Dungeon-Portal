@@ -1,7 +1,7 @@
 {
-  "name": "dnd-dm-screen",
+  "name": "dungeon-portal",
   "version": "1.0.0",
-  "description": "DnD DM Screen - Multiplayer 2D Web App",
+  "description": "Dungeon Portal - Multiplayer 2D Web App",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

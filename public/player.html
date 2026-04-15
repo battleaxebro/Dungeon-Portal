@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DM Screen – Player View</title>
+  <title>Dungeon Portal – Player View</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <style>
@@ -183,6 +183,37 @@
     .secret-entry-body { color: var(--text); white-space: pre-wrap; }
     .secret-entry.arcane .secret-entry-body { color: #c0d0ff; }
 
+    /* ── Character Nameplate ──────────────────────────────── */
+    #char-nameplate {
+      position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
+      z-index: 20; text-align: center; white-space: nowrap;
+      background: linear-gradient(180deg, #3d1f06 0%, #2a1408 55%, #3a1e08 100%);
+      border: 2px solid #7a4a12;
+      box-shadow:
+        inset 0 1px 0 rgba(240,200,110,0.2),
+        inset 0 -1px 0 rgba(0,0,0,0.5),
+        0 5px 20px rgba(0,0,0,0.75);
+      border-radius: 6px;
+      padding: 0.55rem 1.6rem 0.6rem;
+      min-width: 180px; max-width: 65%;
+      pointer-events: none;
+      animation: nameplateIn 0.5s cubic-bezier(0.34,1.4,0.64,1) both;
+    }
+    @keyframes nameplateIn {
+      from { opacity: 0; transform: translateX(-50%) translateY(-12px) scale(0.95); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+    }
+    #nameplate-name {
+      font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.35rem;
+      color: #e8c870;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.9), 0 0 10px rgba(200,160,60,0.3);
+      letter-spacing: 0.06em;
+    }
+    #nameplate-sub {
+      font-family: 'Crimson Text', serif; font-style: italic; font-size: 0.9rem;
+      color: #b07840; margin-top: 0.1rem; letter-spacing: 0.02em;
+    }
+
     /* ── Disconnected banner ────────────────────────────────── */
     #disconn-banner {
       position: fixed; top: 0; left: 0; right: 0; z-index: 200;
@@ -190,6 +221,110 @@
       text-align: center; padding: 0.6rem; font-family: 'Cinzel', serif;
       font-size: 0.85rem; display: none;
     }
+
+    /* ── D20 Dice Roller ──────────────────────────────────── */
+    #dice-widget {
+      position: fixed; bottom: 44px; right: 14px; z-index: 60;
+      display: none; /* shown after joining */
+      flex-direction: column; align-items: center; gap: 0.45rem;
+    }
+    .dice-mod-row {
+      display: flex; align-items: center; gap: 0.35rem;
+      background: rgba(8,8,18,0.82); border: 1px solid var(--border);
+      border-radius: 8px; padding: 0.3rem 0.55rem;
+      backdrop-filter: blur(6px);
+    }
+    .dice-step {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: rgba(200,167,67,0.12); border: 1px solid var(--border);
+      color: var(--gold); font-size: 1rem; cursor: pointer;
+      font-family: inherit; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.12s;
+    }
+    .dice-step:hover { background: rgba(200,167,67,0.38); }
+    #dice-mod-val {
+      font-family: 'Cinzel', serif; font-size: 0.72rem; color: var(--cream);
+      min-width: 38px; text-align: center; letter-spacing: 0.04em;
+    }
+    #dice-roll-btn {
+      font-family: 'Cinzel', serif; font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.07em; text-transform: uppercase;
+      background: rgba(200,167,67,0.18); border: 1px solid var(--gold);
+      color: var(--gold); border-radius: 8px; padding: 0.38rem 1rem;
+      cursor: pointer; backdrop-filter: blur(6px);
+      transition: background 0.12s;
+    }
+    #dice-roll-btn:hover { background: rgba(200,167,67,0.42); }
+
+    /* Roll History */
+    #roll-history {
+      position: fixed; bottom: 132px; right: 14px; z-index: 59;
+      width: 164px;
+      display: none; flex-direction: column;
+      max-height: 220px;
+      background: rgba(8,8,18,0.88); border: 1px solid var(--border);
+      border-radius: 8px; overflow: hidden;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+    }
+    .rh-header {
+      padding: 0.28rem 0.6rem; border-bottom: 1px solid var(--border);
+      font-family: 'Cinzel', serif; font-size: 0.6rem; color: var(--gold);
+      letter-spacing: 0.09em; flex-shrink: 0; text-transform: uppercase;
+    }
+    #rh-list {
+      overflow-y: auto; flex: 1;
+      padding: 0.25rem; display: flex; flex-direction: column; gap: 0.15rem;
+    }
+    #rh-list::-webkit-scrollbar { width: 4px; }
+    #rh-list::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 2px; }
+    .rh-entry {
+      padding: 0.22rem 0.5rem; border-radius: 4px;
+      font-family: 'Crimson Text', serif; font-size: 0.82rem; line-height: 1.3;
+      border-left: 2px solid; background: rgba(255,255,255,0.04);
+      animation: rhIn 0.18s ease both;
+    }
+    @keyframes rhIn {
+      from { opacity: 0; transform: translateX(8px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .rh-entry.nat20  { border-color: #f0c040; color: #ddb830; }
+    .rh-entry.nat1   { border-color: #e04848; color: #c07070; }
+    .rh-entry.normal { border-color: rgba(200,167,67,0.25); color: var(--text); }
+
+    /* D20 Result Overlay */
+    #dice-overlay {
+      position: fixed; inset: 0; z-index: 150;
+      background: rgba(4,4,12,0.9); backdrop-filter: blur(8px);
+      display: none; flex-direction: column;
+      align-items: center; justify-content: center; gap: 1.1rem;
+    }
+    #dice-overlay.show { display: flex; }
+    #dice-result-inner {
+      display: flex; flex-direction: column; align-items: center; gap: 0.55rem;
+      animation: dicePopIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes dicePopIn {
+      from { transform: scale(0.3) rotate(-30deg); opacity: 0; }
+      to   { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    #dice-total-line {
+      font-family: 'Cinzel', serif; font-size: 1.3rem; color: var(--cream);
+      letter-spacing: 0.06em; text-align: center; min-height: 2rem;
+    }
+    #dice-label-line {
+      font-family: 'Crimson Text', serif; font-size: 1.1rem;
+      font-style: italic; text-align: center; min-height: 1.6rem;
+    }
+    #dice-dismiss {
+      font-family: 'Cinzel', serif; font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      background: rgba(200,167,67,0.12); border: 1px solid var(--border);
+      color: var(--gold); border-radius: 6px; padding: 0.5rem 2.2rem;
+      cursor: pointer; transition: all 0.15s; margin-top: 0.4rem;
+    }
+    #dice-dismiss:hover { background: rgba(200,167,67,0.35); border-color: var(--gold); }
   </style>
 </head>
 <body>
@@ -242,6 +377,31 @@
 <!-- ═══ DISCONNECTED BANNER ══════════════════════════════════════════════ -->
 <div id="disconn-banner">⚠ DM disconnected — waiting for reconnection…</div>
 
+<!-- ═══ ROLL HISTORY ════════════════════════════════════════════════════ -->
+<div id="roll-history">
+  <div class="rh-header">🎲 Roll History</div>
+  <div id="rh-list"></div>
+</div>
+
+<!-- ═══ D20 DICE ROLLER ══════════════════════════════════════════════════ -->
+<div id="dice-widget">
+  <div class="dice-mod-row">
+    <button class="dice-step" onclick="stepMod(-1)" title="Decrease modifier">−</button>
+    <span id="dice-mod-val">±0</span>
+    <button class="dice-step" onclick="stepMod(1)" title="Increase modifier">+</button>
+  </div>
+  <button id="dice-roll-btn" onclick="rollD20()">🎲 Roll D20</button>
+</div>
+
+<div id="dice-overlay">
+  <div id="dice-result-inner">
+    <div id="dice-svg-wrap"></div>
+    <div id="dice-total-line"></div>
+    <div id="dice-label-line"></div>
+    <button id="dice-dismiss" onclick="dismissDice()">Dismiss</button>
+  </div>
+</div>
+
 <script src="/socket.io/socket.io.js"></script>
 <script>
 // ════════════════════════════════════════════════════════════════════════════
@@ -251,6 +411,7 @@ const socket = io();
 let sessionCode = null;
 let playerName = null;
 let currentRoom = null;
+let currentExpression = 'default';
 let visibleCards = {}; // id -> card data
 let statusHideTimer = null;
 let renderingEnabled = false;
@@ -282,11 +443,14 @@ function joinSession() {
     document.getElementById('join-overlay').style.display = 'none';
     document.getElementById('scene').style.display = 'block';
     document.getElementById('status-bar').style.display = 'flex';
+    document.getElementById('dice-widget').style.display = 'flex';
+    // roll-history stays hidden until first roll
     document.getElementById('player-label').textContent = name;
 
     // Apply current server state
     const s = res.session;
     if (s.currentRoom) {
+      currentExpression = s.currentRoom.currentExpression || 'default';
       renderRoom(s.currentRoom);
     } else {
       showWaiting(true);
@@ -310,6 +474,7 @@ document.getElementById('jp-code').addEventListener('keydown', e => { if (e.key 
 // SOCKET EVENTS
 // ════════════════════════════════════════════════════════════════════════════
 socket.on('room-switched', ({ room }) => {
+  currentExpression = room.currentExpression || 'default';
   renderRoom(room);
   showWaiting(false);
 });
@@ -329,6 +494,12 @@ socket.on('room-cleared', () => {
 socket.on('mouth-sync', ({ volume }) => {
   if (!renderingEnabled) return;
   showMouth(volume);
+});
+
+socket.on('expression-changed', ({ expression }) => {
+  if (!renderingEnabled || !currentRoom) return;
+  currentExpression = expression;
+  renderSprite(currentRoom);
 });
 
 socket.on('info-card-update', ({ card }) => {
@@ -382,7 +553,35 @@ function renderRoom(room) {
   // Sprite
   renderSprite(room);
 
+  // Nameplate
+  renderNameplate(room);
+
   flashStatusBar();
+}
+
+function renderNameplate(room) {
+  const existing = document.getElementById('char-nameplate');
+  if (existing) existing.remove();
+
+  if (!room || !room.charName) return;
+
+  const scene = document.getElementById('scene');
+  const plate = document.createElement('div');
+  plate.id = 'char-nameplate';
+
+  const nameEl = document.createElement('div');
+  nameEl.id = 'nameplate-name';
+  nameEl.textContent = room.charName;
+  plate.appendChild(nameEl);
+
+  const subParts = [room.charTitle, room.charAffiliation].filter(Boolean);
+  if (subParts.length) {
+    const subEl = document.createElement('div');
+    subEl.id = 'nameplate-sub';
+    subEl.textContent = subParts.join('  ·  ');
+    plate.appendChild(subEl);
+  }
+  scene.appendChild(plate);
 }
 
 function renderBackground(room) {
@@ -410,10 +609,22 @@ function clearBackground() {
   if (bg) bg.remove();
 }
 
+function getExpressionUrl(room, expression) {
+  const map = {
+    default:    room.spriteUrl,
+    angry:      room.spriteAngryUrl      || room.spriteUrl,
+    happy:      room.spriteHappyUrl      || room.spriteUrl,
+    sad:        room.spriteSadUrl        || room.spriteUrl,
+    suspicious: room.spriteSuspiciousUrl || room.spriteUrl
+  };
+  return map[expression] || room.spriteUrl;
+}
+
 function renderSprite(room) {
   clearSprite();
 
-  if (!room.spriteUrl) return;
+  const activeSpriteUrl = getExpressionUrl(room, currentExpression);
+  if (!activeSpriteUrl) return;
 
   const scene = document.getElementById('scene');
   const sp = room.spritePosition || { x: 75, y: 80, w: 280 };
@@ -435,7 +646,7 @@ function renderSprite(room) {
 
   const img = document.createElement('img');
   img.className = 'sprite-img';
-  img.src = room.spriteUrl;
+  img.src = activeSpriteUrl;
 
   container.appendChild(img);
 
@@ -552,6 +763,187 @@ function autoFadeStatusBar() {
 window.addEventListener('resize', () => {
   if (currentRoom) renderSprite(currentRoom);
 });
+
+// ════════════════════════════════════════════════════════════════════════════
+// D20 DICE ROLLER
+// ════════════════════════════════════════════════════════════════════════════
+let diceModifier = 0;
+let diceRolling  = false;
+let rollHistory  = [];
+
+function stepMod(delta) {
+  diceModifier = Math.max(-99, Math.min(99, diceModifier + delta));
+  document.getElementById('dice-mod-val').textContent =
+    diceModifier === 0 ? '±0' : (diceModifier > 0 ? '+' : '') + diceModifier;
+}
+
+function rollD20() {
+  if (diceRolling) return;
+  diceRolling = true;
+
+  const finalRoll  = Math.floor(Math.random() * 20) + 1;
+  const total      = finalRoll + diceModifier;
+  const glowColor  = finalRoll === 20 ? '#f0c040' : finalRoll === 1 ? '#e04848' : '#38c0e8';
+
+  const overlay   = document.getElementById('dice-overlay');
+  const svgWrap   = document.getElementById('dice-svg-wrap');
+  const totalLine = document.getElementById('dice-total-line');
+  const labelLine = document.getElementById('dice-label-line');
+
+  totalLine.textContent = '';
+  labelLine.textContent = '';
+
+  // Restart the pop-in animation each roll
+  const inner = document.getElementById('dice-result-inner');
+  inner.style.animation = 'none';
+  void inner.offsetWidth; // force reflow
+  inner.style.animation = '';
+
+  overlay.classList.add('show');
+
+  let frame = 0;
+  const FRAMES = 22; // animation frames before settling
+
+  function tick() {
+    const displayRoll = frame < FRAMES ? Math.floor(Math.random() * 20) + 1 : finalRoll;
+    const tintColor   = frame < FRAMES ? '#38c0e8' : glowColor;
+    svgWrap.innerHTML = buildD20SVG(displayRoll, tintColor);
+    frame++;
+    if (frame <= FRAMES) {
+      const delay = frame < 8 ? 35 : frame < 14 ? 55 : frame < 19 ? 85 : 120;
+      setTimeout(tick, delay);
+    } else {
+      // Reveal totals
+      if (diceModifier !== 0) {
+        const sign = diceModifier > 0 ? '+' : '';
+        totalLine.textContent = `${finalRoll}  ${sign}${diceModifier}  =  ${total}`;
+      } else {
+        totalLine.textContent = String(finalRoll);
+      }
+      if (finalRoll === 20) {
+        labelLine.style.color = '#f0c040';
+        labelLine.textContent = '✨ Natural 20!';
+      } else if (finalRoll === 1) {
+        labelLine.style.color = '#e04848';
+        labelLine.textContent = '💀 Natural 1';
+      } else {
+        labelLine.textContent = '';
+      }
+      addRollHistoryEntry(finalRoll, diceModifier, total);
+      diceRolling = false;
+    }
+  }
+  tick();
+}
+
+function dismissDice() {
+  document.getElementById('dice-overlay').classList.remove('show');
+}
+
+// Close overlay with Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') dismissDice();
+});
+
+function addRollHistoryEntry(roll, modifier, total) {
+  const isNat20 = roll === 20;
+  const isNat1  = roll === 1;
+
+  // Build display text
+  let text;
+  if (modifier !== 0) {
+    const sign = modifier > 0 ? '+' : '';
+    text = `${roll} ${sign}${modifier} = ${total}`;
+  } else {
+    text = String(roll);
+  }
+  if (isNat20) text = '✨ ' + text;
+  if (isNat1)  text = '💀 ' + text;
+
+  // Append to history array (oldest first, cap at 30)
+  rollHistory.push({ text, isNat20, isNat1 });
+  if (rollHistory.length > 30) rollHistory.shift();
+
+  // Render
+  const list = document.getElementById('rh-list');
+  const entry = document.createElement('div');
+  entry.className = 'rh-entry ' + (isNat20 ? 'nat20' : isNat1 ? 'nat1' : 'normal');
+  entry.textContent = text;
+  list.appendChild(entry);
+
+  // Trim DOM to 30 entries (remove oldest from top)
+  while (list.children.length > 30) list.removeChild(list.firstChild);
+
+  // Scroll to bottom so newest is always visible
+  list.scrollTop = list.scrollHeight;
+
+  // Show the panel on first roll
+  const panel = document.getElementById('roll-history');
+  if (panel.style.display !== 'flex') panel.style.display = 'flex';
+}
+
+function ptsStr(arr) {
+  return arr.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
+}
+
+function buildD20SVG(roll, glowColor) {
+  const cx = 120, cy = 120;
+  const R  = 108; // outer decagon radius
+  const r  = 54;  // inner decagon radius (rotated 18° = half-step)
+
+  // Build outer and inner decagon vertices
+  const O = [], I = [];
+  for (let k = 0; k < 10; k++) {
+    const ao = -Math.PI / 2 + (2 * Math.PI / 10) * k;
+    const ai = -Math.PI / 2 + Math.PI / 10 + (2 * Math.PI / 10) * k;
+    O.push([cx + R * Math.cos(ao), cy + R * Math.sin(ao)]);
+    I.push([cx + r * Math.cos(ai), cy + r * Math.sin(ai)]);
+  }
+
+  // 20 face shades — alternating two tone bands for a 3-D look
+  const shadesA = ['#131828','#0e1320','#181e30','#101522','#1c2238','#0c1018','#162030','#121828','#1a2030','#0e1220'];
+  const shadesB = ['#1a2040','#121830','#1e2448','#101828','#16203c','#0a0e1c','#182538','#141e34','#1c2440','#0e1428'];
+
+  let polys = '';
+  for (let k = 0; k < 10; k++) {
+    const k2 = (k + 1) % 10;
+    // Outer triangle: O[k] → O[k+1] → I[k]
+    polys += `<polygon points="${ptsStr([O[k], O[k2], I[k]])}" fill="${shadesA[k]}" stroke="${glowColor}" stroke-width="1.2"/>`;
+    // Inner triangle: I[k] → I[k+1] → O[k+1]
+    polys += `<polygon points="${ptsStr([I[k], I[k2], O[k2]])}" fill="${shadesB[k]}" stroke="${glowColor}" stroke-width="1.2"/>`;
+  }
+
+  // Center face polygon (inner decagon)
+  polys += `<polygon points="${ptsStr(I)}" fill="#07091a" stroke="${glowColor}" stroke-width="1.6"/>`;
+
+  // Outer silhouette glow ring
+  const outerPts = ptsStr(O);
+
+  // Font size — squeeze two-digit numbers
+  const fs = roll >= 10 ? 42 : 50;
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="260" height="260">
+    <defs>
+      <filter id="nglow" x="-60%" y="-60%" width="220%" height="220%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="eglow" x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <!-- Outer edge glow -->
+    <polygon points="${outerPts}" fill="none" stroke="${glowColor}" stroke-width="3"
+             filter="url(#eglow)" opacity="0.65"/>
+    <!-- 20 face triangles -->
+    ${polys}
+    <!-- Roll number -->
+    <text x="120" y="127" text-anchor="middle" dominant-baseline="middle"
+          font-family="Cinzel,serif" font-size="${fs}" font-weight="700"
+          fill="${glowColor}" filter="url(#nglow)">${roll}</text>
+  </svg>`;
+}
 </script>
 </body>
 </html>

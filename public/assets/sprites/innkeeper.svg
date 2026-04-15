@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 440">
+  <defs>
+    <linearGradient id="iShirt" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#c0762a"/><stop offset="100%" stop-color="#a05618"/>
+    </linearGradient>
+    <linearGradient id="iSkin" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#dba070"/><stop offset="100%" stop-color="#b87848"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="100" cy="432" rx="58" ry="8" fill="rgba(0,0,0,0.25)"/>
+  <!-- Shoes -->
+  <ellipse cx="84" cy="390" rx="24" ry="10" fill="#1e1008"/>
+  <ellipse cx="116" cy="390" rx="24" ry="10" fill="#1e1008"/>
+  <!-- Legs/Pants -->
+  <rect x="68" y="288" width="30" height="104" rx="6" fill="#3a3050"/>
+  <rect x="102" y="288" width="30" height="104" rx="6" fill="#2e2848"/>
+  <!-- Stocky body -->
+  <path d="M44 145 Q100 128 156 145 L162 294 L38 294 Z" fill="url(#iShirt)"/>
+  <!-- Belly roundness -->
+  <ellipse cx="100" cy="232" rx="54" ry="46" fill="#b06820" opacity="0.55"/>
+  <!-- Apron -->
+  <path d="M70 170 Q100 162 130 170 L134 292 L66 292 Z" fill="#e8e0c8"/>
+  <path d="M70 170 Q100 162 130 170" fill="none" stroke="#c8b888" stroke-width="2"/>
+  <!-- Apron pocket -->
+  <rect x="82" y="240" width="36" height="28" rx="4" fill="#d8d0b8"/>
+  <path d="M80 240 L120 240" stroke="#c8b888" stroke-width="1.5"/>
+  <!-- Rolled sleeves -->
+  <path d="M44 150 L22 234 L42 244 L62 172" fill="#b06820"/>
+  <path d="M156 150 L178 234 L158 244 L138 172" fill="#a05618"/>
+  <rect x="22" y="228" width="26" height="14" rx="5" fill="#c0762a"/>
+  <rect x="152" y="228" width="26" height="14" rx="5" fill="#c0762a"/>
+  <!-- Hands -->
+  <ellipse cx="30" cy="248" rx="14" ry="12" fill="url(#iSkin)"/>
+  <ellipse cx="170" cy="248" rx="14" ry="12" fill="url(#iSkin)"/>
+  <!-- Tankard (right hand) -->
+  <rect x="162" y="232" width="20" height="26" rx="3" fill="#8B6914"/>
+  <rect x="180" y="238" width="7" height="14" rx="3" fill="#6a5010"/>
+  <ellipse cx="172" cy="232" rx="10" ry="4" fill="white" opacity="0.7"/>
+  <!-- Neck -->
+  <rect x="86" y="114" width="28" height="36" rx="5" fill="url(#iSkin)"/>
+  <!-- Head (round, smooth lower face) -->
+  <ellipse cx="100" cy="92" rx="40" ry="42" fill="url(#iSkin)"/>
+  <!-- Rosy cheeks -->
+  <ellipse cx="74" cy="102" rx="11" ry="8" fill="#e09080" opacity="0.45"/>
+  <ellipse cx="126" cy="102" rx="11" ry="8" fill="#e09080" opacity="0.45"/>
+  <!-- Smooth lower face -->
+  <path d="M72 108 Q100 126 128 108 L126 118 Q100 132 74 118 Z" fill="#c88858"/>
+  <!-- Eyes (friendly) -->
+  <ellipse cx="86" cy="86" rx="8" ry="8" fill="white"/>
+  <ellipse cx="114" cy="86" rx="8" ry="8" fill="white"/>
+  <circle cx="87" cy="87" r="5" fill="#5a3010"/>
+  <circle cx="115" cy="87" r="5" fill="#5a3010"/>
+  <circle cx="88" cy="86" r="2" fill="white"/>
+  <circle cx="116" cy="86" r="2" fill="white"/>
+  <!-- Hair -->
+  <path d="M60 72 Q100 50 140 72 Q138 55 126 48 Q100 36 74 48 Q62 55 60 72" fill="#4a2a0a"/>
+  <rect x="60" y="72" width="9" height="32" rx="5" fill="#4a2a0a"/>
+  <rect x="131" y="72" width="9" height="32" rx="5" fill="#4a2a0a"/>
+</svg>

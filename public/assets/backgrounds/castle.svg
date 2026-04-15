@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720">
+  <defs>
+    <linearGradient id="cWall" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2a2830"/><stop offset="100%" stop-color="#1a1820"/>
+    </linearGradient>
+    <linearGradient id="cFloor" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2a2635"/><stop offset="100%" stop-color="#1a1628"/>
+    </linearGradient>
+    <radialGradient id="cTorch" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffa030" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#ffa030" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="cWindow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#4060c0" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#4060c0" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Stone wall -->
+  <rect width="1280" height="720" fill="url(#cWall)"/>
+  <!-- Stone block texture -->
+  <rect x="0" y="0" width="1280" height="58" fill="#222028" stroke="#181620" stroke-width="2"/>
+  <rect x="0" y="61" width="1280" height="58" fill="#1e1c26" stroke="#181620" stroke-width="2"/>
+  <rect x="0" y="122" width="1280" height="58" fill="#242230" stroke="#181620" stroke-width="2"/>
+  <rect x="0" y="183" width="1280" height="58" fill="#1e1c26" stroke="#181620" stroke-width="2"/>
+  <rect x="0" y="244" width="1280" height="58" fill="#222028" stroke="#181620" stroke-width="2"/>
+  <rect x="0" y="305" width="1280" height="58" fill="#1e1c26" stroke="#181620" stroke-width="2"/>
+  <rect x="0" y="366" width="1280" height="58" fill="#242230" stroke="#181620" stroke-width="2"/>
+  <rect x="0" y="427" width="1280" height="58" fill="#1e1c26" stroke="#181620" stroke-width="2"/>
+  <!-- Vertical stone joints (offset per row) -->
+  <line x1="160" y1="0" x2="160" y2="58" stroke="#181620" stroke-width="2"/>
+  <line x1="380" y1="0" x2="380" y2="58" stroke="#181620" stroke-width="2"/>
+  <line x1="620" y1="0" x2="620" y2="58" stroke="#181620" stroke-width="2"/>
+  <line x1="860" y1="0" x2="860" y2="58" stroke="#181620" stroke-width="2"/>
+  <line x1="1100" y1="0" x2="1100" y2="58" stroke="#181620" stroke-width="2"/>
+  <line x1="80" y1="61" x2="80" y2="119" stroke="#181620" stroke-width="2"/>
+  <line x1="300" y1="61" x2="300" y2="119" stroke="#181620" stroke-width="2"/>
+  <line x1="540" y1="61" x2="540" y2="119" stroke="#181620" stroke-width="2"/>
+  <line x1="780" y1="61" x2="780" y2="119" stroke="#181620" stroke-width="2"/>
+  <line x1="1020" y1="61" x2="1020" y2="119" stroke="#181620" stroke-width="2"/>
+  <line x1="1220" y1="61" x2="1220" y2="119" stroke="#181620" stroke-width="2"/>
+  <!-- Decorative arch frame top -->
+  <path d="M0 0 L0 36 Q640 -20 1280 36 L1280 0 Z" fill="#1a1828" opacity="0.6"/>
+  <!-- Gold decorative border top -->
+  <rect x="0" y="0" width="1280" height="8" fill="#c8a720" opacity="0.3"/>
+  <!-- Tall arch / window center -->
+  <rect x="520" y="0" width="240" height="310" fill="#0a0814"/>
+  <path d="M520 0 L520 220 Q520 310 640 310 Q760 310 760 220 L760 0" fill="#0a0814"/>
+  <path d="M520 0 L520 220 Q520 310 640 310 Q760 310 760 220 L760 0" fill="none" stroke="#c8a720" stroke-width="4" opacity="0.5"/>
+  <!-- Stained glass window effect -->
+  <path d="M528 0 L528 218 Q528 300 640 300 Q752 300 752 218 L752 0" fill="#1a1060" opacity="0.5"/>
+  <path d="M528 0 L528 218 Q528 300 640 300 Q752 300 752 218 L752 0" fill="url(#cWindow)"/>
+  <!-- Window cross -->
+  <line x1="640" y1="0" x2="640" y2="300" stroke="#c8a720" stroke-width="3" opacity="0.6"/>
+  <line x1="528" y1="150" x2="752" y2="150" stroke="#c8a720" stroke-width="3" opacity="0.6"/>
+  <!-- Throne/seat hint in archway -->
+  <rect x="580" y="460" width="120" height="90" fill="#2a1808" opacity="0.8"/>
+  <rect x="575" y="380" width="130" height="90" fill="#3a2010" opacity="0.7"/>
+  <rect x="568" y="372" width="144" height="14" rx="4" fill="#c8a720" opacity="0.6"/>
+  <!-- Left decorative pillar -->
+  <rect x="180" y="0" width="60" height="485" fill="#2a2838"/>
+  <rect x="174" y="0" width="72" height="20" fill="#1e1c28"/>
+  <rect x="174" y="480" width="72" height="22" fill="#1e1c28"/>
+  <!-- Gold trim on pillar -->
+  <line x1="210" y1="0" x2="210" y2="485" stroke="#c8a720" stroke-width="1.5" opacity="0.3"/>
+  <line x1="180" y1="100" x2="240" y2="100" stroke="#c8a720" stroke-width="1.5" opacity="0.3"/>
+  <line x1="180" y1="250" x2="240" y2="250" stroke="#c8a720" stroke-width="1.5" opacity="0.3"/>
+  <line x1="180" y1="400" x2="240" y2="400" stroke="#c8a720" stroke-width="1.5" opacity="0.3"/>
+  <!-- Right decorative pillar -->
+  <rect x="1040" y="0" width="60" height="485" fill="#2a2838"/>
+  <rect x="1034" y="0" width="72" height="20" fill="#1e1c28"/>
+  <rect x="1034" y="480" width="72" height="22" fill="#1e1c28"/>
+  <line x1="1070" y1="0" x2="1070" y2="485" stroke="#c8a720" stroke-width="1.5" opacity="0.3"/>
+  <line x1="1040" y1="100" x2="1100" y2="100" stroke="#c8a720" stroke-width="1.5" opacity="0.3"/>
+  <line x1="1040" y1="250" x2="1100" y2="250" stroke="#c8a720" stroke-width="1.5" opacity="0.3"/>
+  <line x1="1040" y1="400" x2="1100" y2="400" stroke="#c8a720" stroke-width="1.5" opacity="0.3"/>
+  <!-- Torches on pillars -->
+  <rect x="168" y="200" width="10" height="28" rx="3" fill="#6a4010"/>
+  <path d="M165 198 Q173 178 181 198 Q173 206 165 198" fill="#ff6600"/>
+  <path d="M167 198 Q173 182 179 198 Q173 205 167 198" fill="#ffaa00"/>
+  <ellipse cx="173" cy="187" rx="110" ry="150" fill="url(#cTorch)"/>
+  <rect x="1102" y="200" width="10" height="28" rx="3" fill="#6a4010"/>
+  <path d="M1099 198 Q1107 178 1115 198 Q1107 206 1099 198" fill="#ff6600"/>
+  <path d="M1101 198 Q1107 182 1113 198 Q1107 205 1101 198" fill="#ffaa00"/>
+  <ellipse cx="1107" cy="187" rx="110" ry="150" fill="url(#cTorch)"/>
+  <!-- Tiled floor -->
+  <rect x="0" y="485" width="1280" height="235" fill="url(#cFloor)"/>
+  <!-- Floor tile grid -->
+  <line x1="0" y1="520" x2="1280" y2="520" stroke="#221e2e" stroke-width="2"/>
+  <line x1="0" y1="560" x2="1280" y2="560" stroke="#221e2e" stroke-width="2"/>
+  <line x1="0" y1="600" x2="1280" y2="600" stroke="#221e2e" stroke-width="2"/>
+  <line x1="0" y1="640" x2="1280" y2="640" stroke="#221e2e" stroke-width="2"/>
+  <line x1="0" y1="680" x2="1280" y2="680" stroke="#221e2e" stroke-width="2"/>
+  <line x1="128" y1="485" x2="128" y2="720" stroke="#221e2e" stroke-width="2"/>
+  <line x1="256" y1="485" x2="256" y2="720" stroke="#221e2e" stroke-width="2"/>
+  <line x1="384" y1="485" x2="384" y2="720" stroke="#221e2e" stroke-width="2"/>
+  <line x1="512" y1="485" x2="512" y2="720" stroke="#221e2e" stroke-width="2"/>
+  <line x1="640" y1="485" x2="640" y2="720" stroke="#221e2e" stroke-width="2"/>
+  <line x1="768" y1="485" x2="768" y2="720" stroke="#221e2e" stroke-width="2"/>
+  <line x1="896" y1="485" x2="896" y2="720" stroke="#221e2e" stroke-width="2"/>
+  <line x1="1024" y1="485" x2="1024" y2="720" stroke="#221e2e" stroke-width="2"/>
+  <line x1="1152" y1="485" x2="1152" y2="720" stroke="#221e2e" stroke-width="2"/>
+  <!-- Banners -->
+  <rect x="330" y="0" width="40" height="180" fill="#8B1010"/>
+  <polygon points="330,180 350,200 370,180" fill="#8B1010"/>
+  <line x1="350" y1="60" x2="350" y2="160" stroke="#c8a720" stroke-width="2" opacity="0.7"/>
+  <line x1="334" y1="100" x2="366" y2="100" stroke="#c8a720" stroke-width="2" opacity="0.7"/>
+  <rect x="910" y="0" width="40" height="180" fill="#8B1010"/>
+  <polygon points="910,180 930,200 950,180" fill="#8B1010"/>
+  <line x1="930" y1="60" x2="930" y2="160" stroke="#c8a720" stroke-width="2" opacity="0.7"/>
+  <line x1="914" y1="100" x2="946" y2="100" stroke="#c8a720" stroke-width="2" opacity="0.7"/>
+  <!-- Atmospheric overlay -->
+  <rect width="1280" height="720" fill="#1010300" opacity="0.12"/>
+  <!-- Floor center glow (from throne) -->
+  <ellipse cx="640" cy="600" rx="300" ry="80" fill="#c8a720" opacity="0.05"/>
+</svg>

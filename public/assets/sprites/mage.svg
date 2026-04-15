@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 440">
+  <defs>
+    <linearGradient id="mRobe" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#3a2a6a"/><stop offset="100%" stop-color="#1a1040"/>
+    </linearGradient>
+    <linearGradient id="mSkin" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#dba070"/><stop offset="100%" stop-color="#b87848"/>
+    </linearGradient>
+    <radialGradient id="mOrb" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#a080ff"/><stop offset="100%" stop-color="#4020a0"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="100" cy="432" rx="48" ry="8" fill="rgba(0,0,0,0.25)"/>
+  <!-- Robe base -->
+  <path d="M58 142 Q100 130 142 142 L158 400 Q100 412 42 400 Z" fill="url(#mRobe)"/>
+  <!-- Robe trim -->
+  <path d="M58 142 Q100 130 142 142" fill="none" stroke="#c8a720" stroke-width="2"/>
+  <path d="M42 400 Q100 412 158 400" fill="none" stroke="#c8a720" stroke-width="2"/>
+  <!-- Star details on robe -->
+  <text x="80" y="230" fill="#c0b0ff" font-size="14" opacity="0.45">★</text>
+  <text x="112" y="280" fill="#c0b0ff" font-size="10" opacity="0.35">✦</text>
+  <text x="76" y="320" fill="#c0b0ff" font-size="8" opacity="0.3">★</text>
+  <!-- Belt sash -->
+  <path d="M60 195 Q100 185 140 195 L140 212 Q100 202 60 212 Z" fill="#c8a720" opacity="0.65"/>
+  <!-- Sleeves -->
+  <path d="M58 146 Q34 192 26 254 Q40 262 50 254 Q50 196 70 162" fill="url(#mRobe)"/>
+  <path d="M142 146 Q166 192 174 254 Q160 262 150 254 Q150 196 130 162" fill="url(#mRobe)"/>
+  <!-- Hands -->
+  <ellipse cx="32" cy="260" rx="11" ry="13" fill="url(#mSkin)"/>
+  <ellipse cx="168" cy="260" rx="11" ry="13" fill="url(#mSkin)"/>
+  <!-- Orb (right hand) -->
+  <circle cx="172" cy="244" r="16" fill="url(#mOrb)" opacity="0.8"/>
+  <circle cx="172" cy="244" r="10" fill="#c0a0ff" opacity="0.4"/>
+  <circle cx="167" cy="239" r="5" fill="white" opacity="0.5"/>
+  <!-- Staff (left hand) -->
+  <rect x="26" y="150" width="6" height="190" rx="3" fill="#6a4a1a"/>
+  <ellipse cx="29" cy="148" rx="11" ry="13" fill="#3a3080"/>
+  <circle cx="29" cy="145" r="6" fill="#7070d0"/>
+  <circle cx="27" cy="143" r="2.5" fill="white" opacity="0.6"/>
+  <!-- Neck -->
+  <rect x="87" y="114" width="26" height="32" rx="4" fill="url(#mSkin)"/>
+  <!-- Head (smooth lower face) -->
+  <ellipse cx="100" cy="91" rx="32" ry="36" fill="url(#mSkin)"/>
+  <!-- Beard -->
+  <path d="M76 108 Q100 126 124 108 L120 120 Q100 132 80 120 Z" fill="#c0a070" opacity="0.75"/>
+  <!-- Eyes -->
+  <ellipse cx="87" cy="85" rx="6" ry="6" fill="white"/>
+  <ellipse cx="113" cy="85" rx="6" ry="6" fill="white"/>
+  <circle cx="88" cy="86" r="4" fill="#2040a0"/>
+  <circle cx="114" cy="86" r="4" fill="#2040a0"/>
+  <circle cx="89" cy="85" r="1.5" fill="white"/>
+  <circle cx="115" cy="85" r="1.5" fill="white"/>
+  <!-- Eyebrows (bushy) -->
+  <path d="M80 78 Q87 73 95 77" fill="none" stroke="#8a6030" stroke-width="3" stroke-linecap="round"/>
+  <path d="M105 77 Q113 73 120 78" fill="none" stroke="#8a6030" stroke-width="3" stroke-linecap="round"/>
+  <!-- Hat -->
+  <path d="M62 80 Q100 76 138 80 L118 24 Q100 8 82 24 Z" fill="#2a1a50"/>
+  <ellipse cx="100" cy="80" rx="38" ry="10" fill="#3a2a62"/>
+  <ellipse cx="100" cy="80" rx="38" ry="10" fill="none" stroke="#c8a720" stroke-width="2"/>
+  <text x="100" y="58" text-anchor="middle" fill="#c8a720" font-size="16" opacity="0.8">★</text>
+</svg>

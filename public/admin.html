@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DM Screen – Admin</title>
+  <title>Dungeon Portal – Admin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <style>
@@ -358,6 +358,110 @@
     .size-opt:hover { border-color: var(--gold); color: var(--gold); }
     .size-opt.selected { border-color: var(--gold); color: var(--gold); background: rgba(200,167,67,0.15); }
 
+    /* ── Asset Library ────────────────────────────────── */
+    .asset-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.6rem;
+    }
+    .asset-card {
+      border: 1px solid var(--border); border-radius: var(--radius);
+      overflow: hidden; cursor: pointer; transition: all 0.15s; background: var(--bg3);
+      display: flex; flex-direction: column;
+    }
+    .asset-card:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+    .asset-card.selected { border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold); }
+    .asset-card-img {
+      width: 100%; aspect-ratio: 1; object-fit: contain;
+      background: #050508; padding: 4px;
+    }
+    .asset-card-img.bg-img   { aspect-ratio: 16/9; object-fit: cover; padding: 0; }
+    .asset-card-img.sprite-img { aspect-ratio: 2/3; object-fit: contain; padding: 4px; }
+    .sprite-set-exprs {
+      display: flex; gap: 3px; justify-content: center;
+      padding: 0.15rem 0 0.3rem;
+    }
+    .sprite-set-exprs span { font-size: 0.7rem; }
+    .asset-card-name {
+      padding: 0.3rem 0.4rem; font-size: 0.7rem; font-family: 'Cinzel', serif;
+      color: var(--text); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .asset-set-card {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 0.75rem; margin-bottom: 0.6rem;
+    }
+    .asset-set-card:last-child { margin-bottom: 0; }
+    .asset-mouth-thumb {
+      background: #050508; border-radius: 4px; padding: 0.4rem;
+      border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+      min-height: 52px;
+    }
+    .lib-btn {
+      display: block; width: 100%; margin-top: 0.35rem;
+      font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.06em;
+      text-align: center; padding: 0.3rem; border: 1px dashed var(--border);
+      border-radius: var(--radius); background: transparent; color: var(--muted);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .lib-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(200,167,67,0.06); }
+
+    /* ── Expression buttons ───────────────────────────── */
+    #expression-bar {
+      display: none;
+      position: absolute; bottom: 8px; right: 8px; z-index: 30;
+      padding: 0.3rem 0.5rem;
+      background: rgba(10,20,75,0.92);
+      border: 1px solid rgba(70,110,220,0.45);
+      border-radius: 8px;
+      flex-wrap: wrap; gap: 0.28rem; align-items: center;
+      max-width: 260px;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 2px 14px rgba(0,0,20,0.6);
+    }
+    #expression-bar .expr-label {
+      font-family: 'Cinzel', serif; font-size: 0.62rem; color: rgba(140,170,255,0.7);
+      letter-spacing: 0.08em; margin-right: 0.2rem;
+    }
+    .expr-btn {
+      font-family: 'Cinzel', serif; font-size: 0.63rem; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 0.28rem 0.62rem;
+      border: 1px solid rgba(80,120,210,0.45);
+      border-radius: 4px;
+      background: rgba(40,65,160,0.28);
+      color: #8cb0ff;
+      cursor: pointer; transition: all 0.13s;
+    }
+    .expr-btn:hover { background: rgba(60,95,200,0.5); border-color: #7090e0; color: #c0d8ff; }
+    .expr-btn.active {
+      background: rgba(55,90,220,0.65); border-color: #90b4ff;
+      color: #ddeeff; box-shadow: 0 0 8px rgba(80,130,255,0.35);
+    }
+
+    /* ── Character nameplate (preview) ─────────────────── */
+    .char-nameplate {
+      position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+      z-index: 20; text-align: center; white-space: nowrap;
+      background: linear-gradient(180deg, #3d1f06 0%, #2a1408 55%, #3a1e08 100%);
+      border: 2px solid #7a4a12;
+      box-shadow:
+        inset 0 1px 0 rgba(240,200,110,0.18),
+        inset 0 -1px 0 rgba(0,0,0,0.5),
+        0 4px 18px rgba(0,0,0,0.7);
+      border-radius: 5px;
+      padding: 0.4rem 1.1rem;
+      min-width: 120px; max-width: 70%;
+      pointer-events: none;
+    }
+    .nameplate-name {
+      font-family: 'Cinzel', serif; font-weight: 700;
+      color: #e8c870;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.9), 0 0 6px rgba(200,160,60,0.25);
+      letter-spacing: 0.06em;
+    }
+    .nameplate-sub {
+      font-family: 'Crimson Text', serif; font-style: italic;
+      color: #b07840; letter-spacing: 0.02em;
+    }
+
     /* ── Preview secrets panel ─────────────────────────── */
     .preview-secrets-panel {
       position: absolute; left: 0; top: 0; bottom: 0; width: 30%;
@@ -385,7 +489,7 @@
 <!-- ═══ LOADING OVERLAY ══════════════════════════════════════════════════════ -->
 <div id="login-overlay">
   <div class="login-box" style="text-align:center">
-    <h2 style="margin-bottom:0.5rem">⚔️ DM Screen</h2>
+    <h2 style="margin-bottom:0.5rem">🏰 Dungeon Portal</h2>
     <p id="login-status" style="color:var(--muted);font-style:italic">Connecting…</p>
   </div>
 </div>
@@ -395,7 +499,7 @@
 
   <!-- Header -->
   <div id="header">
-    <span class="logo">⚔️ DM Screen</span>
+    <span class="logo">🏰 Dungeon Portal</span>
     <span class="sep">|</span>
     <div id="code-display">
       <small>Player Code</small>
@@ -437,6 +541,14 @@
           <p>Select or add a room to preview</p>
         </div>
         <!-- BG, sprite, mouth, cards rendered here -->
+      </div>
+      <div id="expression-bar">
+        <span class="expr-label">Expression:</span>
+        <button class="expr-btn active" data-expr="default"    onclick="setExpression('default')">Default</button>
+        <button class="expr-btn"        data-expr="angry"      onclick="setExpression('angry')">😠 Angry</button>
+        <button class="expr-btn"        data-expr="happy"      onclick="setExpression('happy')">😊 Happy</button>
+        <button class="expr-btn"        data-expr="sad"        onclick="setExpression('sad')">😢 Sad</button>
+        <button class="expr-btn"        data-expr="suspicious" onclick="setExpression('suspicious')">🤨 Suspicious</button>
       </div>
     </div>
   </div>
@@ -504,6 +616,7 @@
             <p class="replace-hint hidden" id="bg-replace">Click to replace</p>
           </div>
           <input type="hidden" id="rm-bg-url">
+          <button type="button" class="lib-btn" onclick="openAssetPicker('backgrounds','rm-bg-url','bg-zone','bg-preview','bg-hint','bg-replace')">📚 Browse Library</button>
         </div>
         <div class="field">
           <label>Background Fit</label>
@@ -512,16 +625,88 @@
             <option value="contain">Contain (show all, may letterbox)</option>
             <option value="fill">Stretch (distort to fill)</option>
           </select>
-          <hr class="section-sep">
-          <label style="margin-top:0.5rem">Character Sprite (mouthless)</label>
-          <div class="upload-zone" id="sprite-zone">
-            <input type="file" id="sprite-file" accept="image/*" onchange="handleUpload('sprite-file','sprite-zone','rm-sprite-url','sprite-preview')">
-            <img id="sprite-preview" class="preview-img hidden">
-            <p id="sprite-hint">Click or drop an image</p>
-            <p class="replace-hint hidden" id="sprite-replace">Click to replace</p>
-          </div>
-          <input type="hidden" id="rm-sprite-url">
         </div>
+
+        <!-- ── Character 1 ──────────────────────────────────── -->
+        <div class="field full" style="border-top:1px solid var(--border);padding-top:0.75rem">
+          <label style="font-size:0.85rem;margin-bottom:0.75rem;display:block">🧑‍🎤 Character 1</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+            <!-- Default sprite -->
+            <div>
+              <label style="font-size:0.72rem">Default / Idle Sprite</label>
+              <div class="upload-zone" id="sprite-zone">
+                <input type="file" id="sprite-file" accept="image/*" onchange="handleUpload('sprite-file','sprite-zone','rm-sprite-url','sprite-preview')">
+                <img id="sprite-preview" class="preview-img hidden">
+                <p id="sprite-hint">Click or drop an image</p>
+                <p class="replace-hint hidden" id="sprite-replace">Click to replace</p>
+              </div>
+              <input type="hidden" id="rm-sprite-url">
+              <button type="button" class="lib-btn" onclick="openAssetPicker('sprites','rm-sprite-url','sprite-zone','sprite-preview','sprite-hint','sprite-replace')">📚 Browse Library</button>
+            </div>
+            <!-- Expression sprites 2×2 -->
+            <div>
+              <label style="font-size:0.72rem">Expressions</label>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
+                <div>
+                  <label style="font-size:0.65rem;color:var(--muted)">😠 Angry</label>
+                  <div class="upload-zone" id="expr-angry-zone">
+                    <input type="file" id="expr-angry-file" accept="image/*" onchange="handleUpload('expr-angry-file','expr-angry-zone','rm-angry-url','expr-angry-preview')">
+                    <img id="expr-angry-preview" class="preview-img hidden">
+                    <p id="expr-angry-hint">Click or drop</p>
+                    <p class="replace-hint hidden" id="expr-angry-replace">Replace</p>
+                  </div>
+                  <input type="hidden" id="rm-angry-url">
+                </div>
+                <div>
+                  <label style="font-size:0.65rem;color:var(--muted)">😊 Happy</label>
+                  <div class="upload-zone" id="expr-happy-zone">
+                    <input type="file" id="expr-happy-file" accept="image/*" onchange="handleUpload('expr-happy-file','expr-happy-zone','rm-happy-url','expr-happy-preview')">
+                    <img id="expr-happy-preview" class="preview-img hidden">
+                    <p id="expr-happy-hint">Click or drop</p>
+                    <p class="replace-hint hidden" id="expr-happy-replace">Replace</p>
+                  </div>
+                  <input type="hidden" id="rm-happy-url">
+                </div>
+                <div>
+                  <label style="font-size:0.65rem;color:var(--muted)">😢 Sad</label>
+                  <div class="upload-zone" id="expr-sad-zone">
+                    <input type="file" id="expr-sad-file" accept="image/*" onchange="handleUpload('expr-sad-file','expr-sad-zone','rm-sad-url','expr-sad-preview')">
+                    <img id="expr-sad-preview" class="preview-img hidden">
+                    <p id="expr-sad-hint">Click or drop</p>
+                    <p class="replace-hint hidden" id="expr-sad-replace">Replace</p>
+                  </div>
+                  <input type="hidden" id="rm-sad-url">
+                </div>
+                <div>
+                  <label style="font-size:0.65rem;color:var(--muted)">🤨 Suspicious</label>
+                  <div class="upload-zone" id="expr-suspicious-zone">
+                    <input type="file" id="expr-suspicious-file" accept="image/*" onchange="handleUpload('expr-suspicious-file','expr-suspicious-zone','rm-suspicious-url','expr-suspicious-preview')">
+                    <img id="expr-suspicious-preview" class="preview-img hidden">
+                    <p id="expr-suspicious-hint">Click or drop</p>
+                    <p class="replace-hint hidden" id="expr-suspicious-replace">Replace</p>
+                  </div>
+                  <input type="hidden" id="rm-suspicious-url">
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Character identity fields -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem;margin-top:0.8rem">
+            <div>
+              <label style="font-size:0.72rem">Character Name</label>
+              <input id="rm-char-name" placeholder="e.g. Aldric Ashveil">
+            </div>
+            <div>
+              <label style="font-size:0.72rem">Character Title</label>
+              <input id="rm-char-title" placeholder="e.g. Master of Secrets">
+            </div>
+            <div>
+              <label style="font-size:0.72rem">Affiliation</label>
+              <input id="rm-char-affiliation" placeholder="e.g. The Shadow Council">
+            </div>
+          </div>
+        </div>
+
         <div class="field full" style="border-top:1px solid var(--border);padding-top:0.75rem">
           <label>Mouth Images</label>
           <p style="color:var(--muted);font-size:0.78rem;margin-bottom:0.6rem;font-style:italic">At rest (volume ≤10) the sprite shows naturally. Upload up to 4 mouth images for each volume tier.</p>
@@ -567,7 +752,8 @@
               <input type="hidden" id="rm-mouth-url-4">
             </div>
           </div>
-          <button class="btn sm" style="margin-top:0.75rem;width:100%" onclick="openMouthEditor()" id="btn-place-mouth">Set Mouth Position on Sprite</button>
+          <button type="button" class="lib-btn" style="margin-top:0.6rem" onclick="openAssetPicker('mouths')">📚 Browse Mouth Sets</button>
+          <button class="btn sm" style="margin-top:0.5rem;width:100%" onclick="openMouthEditor()" id="btn-place-mouth">Set Mouth Position on Sprite</button>
         </div>
         <div class="field full" style="border-top:1px solid var(--border);padding-top:0.75rem">
           <label>Sprite Position &amp; Size</label>
@@ -688,6 +874,24 @@
   </div>
 </div>
 
+<!-- ═══ ASSET LIBRARY PICKER ══════════════════════════════════════════════════ -->
+<div id="asset-picker-modal" class="modal-overlay hidden">
+  <div class="modal lg">
+    <div class="modal-header">
+      <h3 id="asset-picker-title">Asset Library</h3>
+      <button class="modal-close" onclick="closeModal('asset-picker-modal')">✕</button>
+    </div>
+    <div class="modal-body" style="min-height:320px">
+      <div id="asset-picker-content" style="overflow-y:auto;max-height:60vh">
+        <p style="color:var(--muted);font-style:italic;text-align:center;padding:2rem">Loading assets…</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('asset-picker-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <script src="/socket.io/socket.io.js"></script>
 <script>
 // ════════════════════════════════════════════════════════════════════════════
@@ -702,6 +906,7 @@ let editingRoomId = null;
 let editingCardId = null;
 let mouthPosition = { x: 35, y: 55, w: 30, h: 15 };
 let mouthOpen = false;
+let currentExpression = 'default';
 let micActive = false;
 let audioCtx = null;
 let analyser = null;
@@ -755,6 +960,7 @@ function initSession(code, session) {
   sessionCode = code;
   rooms = session.rooms || [];
   infoCards = session.infoCards || [];
+  loadAssetManifest();
 
   document.getElementById('session-code-text').textContent = code;
   document.getElementById('login-overlay').classList.add('hidden');
@@ -893,6 +1099,17 @@ function selectRoom(index) {
   document.getElementById('btn-edit-room').style.display = hasSel ? '' : 'none';
   document.getElementById('preview-room-name').textContent = hasSel ? rooms[index].name : '';
   document.getElementById('preview-empty').style.display = hasSel ? 'none' : '';
+
+  // Show/hide expression bar
+  const exprBar = document.getElementById('expression-bar');
+  exprBar.style.display = hasSel ? 'flex' : 'none';
+
+  // Sync active button to this room's current expression
+  if (hasSel) {
+    const expr = rooms[index].currentExpression || 'default';
+    currentExpression = expr;
+    syncExpressionButtons(expr);
+  }
 }
 
 function switchCurrentRoom() {
@@ -942,6 +1159,17 @@ function openAddRoomModal() {
   document.getElementById('rm-sw-val').textContent = '280px';
   resetUploadZone('bg-zone', 'bg-preview', 'bg-hint', 'bg-replace');
   resetUploadZone('sprite-zone', 'sprite-preview', 'sprite-hint', 'sprite-replace');
+  document.getElementById('rm-angry-url').value = '';
+  document.getElementById('rm-happy-url').value = '';
+  document.getElementById('rm-sad-url').value = '';
+  document.getElementById('rm-suspicious-url').value = '';
+  document.getElementById('rm-char-name').value = '';
+  document.getElementById('rm-char-title').value = '';
+  document.getElementById('rm-char-affiliation').value = '';
+  resetUploadZone('expr-angry-zone', 'expr-angry-preview', 'expr-angry-hint', 'expr-angry-replace');
+  resetUploadZone('expr-happy-zone', 'expr-happy-preview', 'expr-happy-hint', 'expr-happy-replace');
+  resetUploadZone('expr-sad-zone', 'expr-sad-preview', 'expr-sad-hint', 'expr-sad-replace');
+  resetUploadZone('expr-suspicious-zone', 'expr-suspicious-preview', 'expr-suspicious-hint', 'expr-suspicious-replace');
   resetUploadZone('mouth1-zone', 'mouth1-preview', 'mouth1-hint', 'mouth1-replace');
   resetUploadZone('mouth2-zone', 'mouth2-preview', 'mouth2-hint', 'mouth2-replace');
   resetUploadZone('mouth3-zone', 'mouth3-preview', 'mouth3-hint', 'mouth3-replace');
@@ -974,6 +1202,24 @@ function openEditRoomModal() {
   else resetUploadZone('bg-zone', 'bg-preview', 'bg-hint', 'bg-replace');
   if (room.spriteUrl) setUploadPreview('sprite-zone', 'sprite-preview', 'sprite-hint', 'sprite-replace', room.spriteUrl);
   else resetUploadZone('sprite-zone', 'sprite-preview', 'sprite-hint', 'sprite-replace');
+  // Expression sprites
+  document.getElementById('rm-angry-url').value = room.spriteAngryUrl || '';
+  document.getElementById('rm-happy-url').value = room.spriteHappyUrl || '';
+  document.getElementById('rm-sad-url').value = room.spriteSadUrl || '';
+  document.getElementById('rm-suspicious-url').value = room.spriteSuspiciousUrl || '';
+  if (room.spriteAngryUrl) setUploadPreview('expr-angry-zone','expr-angry-preview','expr-angry-hint','expr-angry-replace', room.spriteAngryUrl);
+  else resetUploadZone('expr-angry-zone','expr-angry-preview','expr-angry-hint','expr-angry-replace');
+  if (room.spriteHappyUrl) setUploadPreview('expr-happy-zone','expr-happy-preview','expr-happy-hint','expr-happy-replace', room.spriteHappyUrl);
+  else resetUploadZone('expr-happy-zone','expr-happy-preview','expr-happy-hint','expr-happy-replace');
+  if (room.spriteSadUrl) setUploadPreview('expr-sad-zone','expr-sad-preview','expr-sad-hint','expr-sad-replace', room.spriteSadUrl);
+  else resetUploadZone('expr-sad-zone','expr-sad-preview','expr-sad-hint','expr-sad-replace');
+  if (room.spriteSuspiciousUrl) setUploadPreview('expr-suspicious-zone','expr-suspicious-preview','expr-suspicious-hint','expr-suspicious-replace', room.spriteSuspiciousUrl);
+  else resetUploadZone('expr-suspicious-zone','expr-suspicious-preview','expr-suspicious-hint','expr-suspicious-replace');
+  // Character info
+  document.getElementById('rm-char-name').value = room.charName || '';
+  document.getElementById('rm-char-title').value = room.charTitle || '';
+  document.getElementById('rm-char-affiliation').value = room.charAffiliation || '';
+  // Mouth zones
   if (room.mouthUrl1) setUploadPreview('mouth1-zone', 'mouth1-preview', 'mouth1-hint', 'mouth1-replace', room.mouthUrl1);
   else resetUploadZone('mouth1-zone', 'mouth1-preview', 'mouth1-hint', 'mouth1-replace');
   if (room.mouthUrl2) setUploadPreview('mouth2-zone', 'mouth2-preview', 'mouth2-hint', 'mouth2-replace', room.mouthUrl2);
@@ -992,6 +1238,13 @@ async function saveRoom() {
     backgroundUrl: document.getElementById('rm-bg-url').value || null,
     bgFit: document.getElementById('rm-bg-fit').value,
     spriteUrl: document.getElementById('rm-sprite-url').value || null,
+    spriteAngryUrl: document.getElementById('rm-angry-url').value || null,
+    spriteHappyUrl: document.getElementById('rm-happy-url').value || null,
+    spriteSadUrl: document.getElementById('rm-sad-url').value || null,
+    spriteSuspiciousUrl: document.getElementById('rm-suspicious-url').value || null,
+    charName: document.getElementById('rm-char-name').value.trim(),
+    charTitle: document.getElementById('rm-char-title').value.trim(),
+    charAffiliation: document.getElementById('rm-char-affiliation').value.trim(),
     mouthUrl1: document.getElementById('rm-mouth-url-1').value || null,
     mouthUrl2: document.getElementById('rm-mouth-url-2').value || null,
     mouthUrl3: document.getElementById('rm-mouth-url-3').value || null,
@@ -1269,8 +1522,39 @@ function refreshPreview() {
     container.appendChild(noBg);
   }
 
-  // Sprite
-  if (room.spriteUrl) {
+  // Character nameplate
+  if (room.charName) {
+    const scale = cW / 1280;
+    const plate = document.createElement('div');
+    plate.className = 'char-nameplate';
+    plate.style.fontSize = Math.round(scale * 14) + 'px';
+    const nameEl = document.createElement('div');
+    nameEl.className = 'nameplate-name';
+    nameEl.style.fontSize = '1.1em';
+    nameEl.textContent = room.charName;
+    plate.appendChild(nameEl);
+    const subParts = [room.charTitle, room.charAffiliation].filter(Boolean);
+    if (subParts.length) {
+      const subEl = document.createElement('div');
+      subEl.className = 'nameplate-sub';
+      subEl.style.fontSize = '0.82em';
+      subEl.textContent = subParts.join('  ·  ');
+      plate.appendChild(subEl);
+    }
+    container.appendChild(plate);
+  }
+
+  // Sprite — pick URL based on current expression
+  const exprUrlMap = {
+    default: room.spriteUrl,
+    angry:   room.spriteAngryUrl      || room.spriteUrl,
+    happy:   room.spriteHappyUrl      || room.spriteUrl,
+    sad:     room.spriteSadUrl        || room.spriteUrl,
+    suspicious: room.spriteSuspiciousUrl || room.spriteUrl
+  };
+  const activeSpriteUrl = exprUrlMap[currentExpression] || room.spriteUrl;
+
+  if (activeSpriteUrl) {
     const sp = room.spritePosition || { x: 50, y: 80, w: 280 };
     const scale = cW / 1280; // normalize to 1280 base width
     const spriteW = sp.w * scale;
@@ -1286,7 +1570,7 @@ function refreshPreview() {
 
     const spriteImg = document.createElement('img');
     spriteImg.className = 'sprite-img';
-    spriteImg.src = room.spriteUrl;
+    spriteImg.src = activeSpriteUrl;
 
     spriteContainer.appendChild(spriteImg);
 
@@ -1358,6 +1642,22 @@ function updatePreviewMouth(volume) {
     const el = document.getElementById(`preview-mouth-${i}`);
     if (el) el.className = 'mouth-overlay ' + (lvl === i ? 'open' : 'closed');
   }
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// EXPRESSION CONTROL
+// ════════════════════════════════════════════════════════════════════════════
+function syncExpressionButtons(expr) {
+  document.querySelectorAll('.expr-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.expr === expr);
+  });
+}
+
+function setExpression(expression) {
+  currentExpression = expression;
+  syncExpressionButtons(expression);
+  refreshPreview(); // update admin preview immediately
+  socket.emit('set-expression', { expression });
 }
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -1601,6 +1901,259 @@ function showNotif(msg, isError = false) {
 // ════════════════════════════════════════════════════════════════════════════
 function escHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// ASSET LIBRARY
+// ════════════════════════════════════════════════════════════════════════════
+let assetManifest = null;
+let pickerContext = null; // { hiddenId, zoneId, previewId, hintId, replaceId }
+
+async function loadAssetManifest() {
+  try {
+    const res = await fetch('/api/assets');
+    assetManifest = await res.json();
+  } catch(e) {
+    console.warn('Asset library not loaded:', e);
+  }
+}
+
+function openAssetPicker(type, hiddenId, zoneId, previewId, hintId, replaceId) {
+  pickerContext = { hiddenId, zoneId, previewId, hintId, replaceId };
+  const titles = {
+    sprites:     '📚 Library — Sprites',
+    backgrounds: '📚 Library — Backgrounds',
+    mouths:      '📚 Library — Mouth Sets'
+  };
+  document.getElementById('asset-picker-title').textContent = titles[type] || 'Asset Library';
+  renderAssetPicker(type);
+  document.getElementById('asset-picker-modal').classList.remove('hidden');
+}
+
+function renderAssetPicker(type) {
+  const content = document.getElementById('asset-picker-content');
+  if (!assetManifest) {
+    content.innerHTML = '<p style="color:var(--muted);font-style:italic;text-align:center;padding:2rem">Loading assets…</p>';
+    loadAssetManifest().then(() => renderAssetPicker(type));
+    return;
+  }
+  if (type === 'sprites')          renderSpritePicker(content);
+  else if (type === 'backgrounds') renderAssetGrid(assetManifest.backgrounds, content, true);
+  else if (type === 'mouths')      renderMouthSets(content);
+}
+
+// ── Sprite picker — shows character sets (folder-based) then individual files ─
+function renderSpritePicker(content) {
+  content.innerHTML = '';
+  const sets       = assetManifest.spriteSets || [];
+  const flatSprites = assetManifest.sprites   || [];
+
+  const EXPR_ICONS = { angry: '😠', happy: '😊', sad: '😢', suspicious: '🤨' };
+  const EXPR_ORDER = ['angry', 'happy', 'sad', 'suspicious'];
+
+  // ── Character sets section ────────────────────────────────────────────────
+  if (sets.length > 0) {
+    const hdr = document.createElement('div');
+    hdr.style.cssText = 'font-family:Cinzel,serif;font-size:0.7rem;color:var(--gold);' +
+                        'letter-spacing:0.12em;margin-bottom:0.55rem;text-transform:uppercase';
+    hdr.textContent = '✦ Character Sets';
+    content.appendChild(hdr);
+
+    const grid = document.createElement('div');
+    grid.className = 'asset-grid';
+    grid.style.marginBottom = '1.25rem';
+
+    sets.forEach(set => {
+      const card = document.createElement('div');
+      card.className = 'asset-card';
+      card.title = `Apply "${set.name}" — fills default sprite + any expression variants`;
+      card.onclick = () => applySpriteSet(set);
+
+      // Portrait thumbnail
+      const img = document.createElement('img');
+      img.className = 'asset-card-img sprite-img';
+      img.src = set.defaultUrl;
+      img.alt = set.name;
+      img.loading = 'lazy';
+      card.appendChild(img);
+
+      // Name row
+      const nameEl = document.createElement('div');
+      nameEl.className = 'asset-card-name';
+      nameEl.textContent = set.name;
+      card.appendChild(nameEl);
+
+      // Expression indicator dots
+      const exprs = document.createElement('div');
+      exprs.className = 'sprite-set-exprs';
+      EXPR_ORDER.forEach(expr => {
+        const pip = document.createElement('span');
+        const has = !!set.expressions[expr];
+        pip.textContent = EXPR_ICONS[expr];
+        pip.title = has ? `${expr} variant included` : `no ${expr} variant`;
+        pip.style.opacity = has ? '1' : '0.18';
+        exprs.appendChild(pip);
+      });
+      card.appendChild(exprs);
+
+      grid.appendChild(card);
+    });
+    content.appendChild(grid);
+  }
+
+  // ── Individual sprites section ────────────────────────────────────────────
+  if (flatSprites.length > 0) {
+    if (sets.length > 0) {
+      const hdr2 = document.createElement('div');
+      hdr2.style.cssText = 'font-family:Cinzel,serif;font-size:0.7rem;color:var(--gold);' +
+                           'letter-spacing:0.12em;margin-bottom:0.55rem;text-transform:uppercase';
+      hdr2.textContent = '✦ Individual Sprites';
+      content.appendChild(hdr2);
+    }
+    const grid2 = document.createElement('div');
+    grid2.className = 'asset-grid';
+    flatSprites.forEach(a => {
+      const card = document.createElement('div');
+      card.className = 'asset-card';
+      card.onclick = () => selectLibraryAsset(a.url, a.name);
+      const img = document.createElement('img');
+      img.className = 'asset-card-img sprite-img';
+      img.src = a.url; img.alt = a.name; img.loading = 'lazy';
+      const name = document.createElement('div');
+      name.className = 'asset-card-name';
+      name.textContent = a.name;
+      card.appendChild(img);
+      card.appendChild(name);
+      grid2.appendChild(card);
+    });
+    content.appendChild(grid2);
+  }
+
+  if (sets.length === 0 && flatSprites.length === 0) {
+    content.innerHTML = '<p style="color:var(--muted);font-style:italic;text-align:center;padding:2rem">No sprites available.</p>';
+  }
+}
+
+// Applies a full sprite set — fills Default/Idle AND all expression slots
+function applySpriteSet(set) {
+  // Default / Idle
+  document.getElementById('rm-sprite-url').value = set.defaultUrl;
+  setUploadPreview('sprite-zone', 'sprite-preview', 'sprite-hint', 'sprite-replace', set.defaultUrl);
+  const mouthImg = document.getElementById('mouth-editor-img');
+  if (mouthImg) mouthImg.src = set.defaultUrl;
+
+  // Expression slots
+  const EXPR_SLOTS = {
+    angry:      { hidden: 'rm-angry-url',      zone: 'expr-angry-zone',      preview: 'expr-angry-preview',      hint: 'expr-angry-hint',      replace: 'expr-angry-replace' },
+    happy:      { hidden: 'rm-happy-url',      zone: 'expr-happy-zone',      preview: 'expr-happy-preview',      hint: 'expr-happy-hint',      replace: 'expr-happy-replace' },
+    sad:        { hidden: 'rm-sad-url',        zone: 'expr-sad-zone',        preview: 'expr-sad-preview',        hint: 'expr-sad-hint',        replace: 'expr-sad-replace' },
+    suspicious: { hidden: 'rm-suspicious-url', zone: 'expr-suspicious-zone', preview: 'expr-suspicious-preview', hint: 'expr-suspicious-hint', replace: 'expr-suspicious-replace' }
+  };
+
+  ['angry', 'happy', 'sad', 'suspicious'].forEach(expr => {
+    const s   = EXPR_SLOTS[expr];
+    const url = set.expressions[expr];
+    document.getElementById(s.hidden).value = url || '';
+    if (url) setUploadPreview(s.zone, s.preview, s.hint, s.replace, url);
+    else     resetUploadZone(s.zone, s.preview, s.hint, s.replace);
+  });
+
+  refreshPreview();
+  closeModal('asset-picker-modal');
+  const n = Object.keys(set.expressions).length;
+  showNotif(`Applied "${set.name}"` + (n ? ` + ${n} expression${n !== 1 ? 's' : ''}` : ''));
+}
+
+// ── Generic asset grid (backgrounds + individual sprites fallback) ─────────
+function renderAssetGrid(assets, container, isBg) {
+  container.innerHTML = '';
+  const grid = document.createElement('div');
+  grid.className = 'asset-grid';
+  assets.forEach(a => {
+    const card = document.createElement('div');
+    card.className = 'asset-card';
+    card.onclick = () => selectLibraryAsset(a.url, a.name);
+    const img = document.createElement('img');
+    img.className = 'asset-card-img' + (isBg ? ' bg-img' : '');
+    img.src = a.url; img.alt = a.name; img.loading = 'lazy';
+    const name = document.createElement('div');
+    name.className = 'asset-card-name';
+    name.textContent = a.name;
+    card.appendChild(img);
+    card.appendChild(name);
+    grid.appendChild(card);
+  });
+  container.appendChild(grid);
+}
+
+function renderMouthSets(container) {
+  if (!assetManifest.mouthSets || !assetManifest.mouthSets.length) {
+    container.innerHTML = '<p style="color:var(--muted);font-style:italic;text-align:center;padding:2rem">No mouth sets available.</p>';
+    return;
+  }
+  container.innerHTML = '';
+  assetManifest.mouthSets.forEach(set => {
+    const card = document.createElement('div');
+    card.className = 'asset-set-card';
+    const header = document.createElement('div');
+    header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem';
+    header.innerHTML = `<div><strong class="cinzel" style="color:var(--gold);font-size:0.85rem">${escHtml(set.name)}</strong></div>`;
+    const applyBtn = document.createElement('button');
+    applyBtn.className = 'btn sm primary';
+    applyBtn.textContent = 'Apply Set';
+    applyBtn.onclick = () => applyMouthSet(set.id);
+    header.appendChild(applyBtn);
+    card.appendChild(header);
+    const grid = document.createElement('div');
+    grid.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem';
+    set.mouths.forEach(m => {
+      const cell = document.createElement('div');
+      cell.style.textAlign = 'center';
+      cell.innerHTML = `
+        <div class="asset-mouth-thumb">
+          <img src="${m.url}" style="max-height:48px;max-width:100%;object-fit:contain" loading="lazy">
+        </div>
+        <div style="font-size:0.65rem;color:var(--muted);margin-top:0.25rem">${escHtml(m.label)}</div>`;
+      grid.appendChild(cell);
+    });
+    card.appendChild(grid);
+    container.appendChild(card);
+  });
+}
+
+// Selects a single asset into whichever zone the picker was opened for
+function selectLibraryAsset(url, name) {
+  if (!pickerContext) return;
+  const { hiddenId, zoneId, previewId, hintId, replaceId } = pickerContext;
+  if (hiddenId) {
+    document.getElementById(hiddenId).value = url;
+    setUploadPreview(zoneId, previewId, hintId, replaceId, url);
+    if (hiddenId === 'rm-sprite-url') {
+      const mouthImg = document.getElementById('mouth-editor-img');
+      if (mouthImg) mouthImg.src = url;
+    }
+  }
+  refreshPreview();
+  closeModal('asset-picker-modal');
+  showNotif(`Applied: ${name}`);
+}
+
+function applyMouthSet(setId) {
+  if (!assetManifest) return;
+  const set = assetManifest.mouthSets.find(s => s.id === setId);
+  if (!set) return;
+  set.mouths.forEach(m => {
+    const hiddenId  = `rm-mouth-url-${m.tier}`;
+    const zoneId    = `mouth${m.tier}-zone`;
+    const previewId = `mouth${m.tier}-preview`;
+    const hintId    = `mouth${m.tier}-hint`;
+    const replaceId = `mouth${m.tier}-replace`;
+    document.getElementById(hiddenId).value = m.url;
+    setUploadPreview(zoneId, previewId, hintId, replaceId, m.url);
+  });
+  refreshPreview();
+  closeModal('asset-picker-modal');
+  showNotif(`Applied "${set.name}" mouth set`);
 }
 </script>
 </body>
